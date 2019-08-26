@@ -1,0 +1,17 @@
+import {ISerializer} from "./ISerializer";
+
+export class StringSerializer implements ISerializer {
+
+    public get contentType(): string {
+        return "text/plain"
+    }
+
+    public deserialize(bytes: Buffer, encoding: string): any {
+        return bytes.toString(encoding || 'utf8');
+    }
+
+    public serialize(obj: any) {
+        return Buffer.from(obj, 'utf8');
+    }
+    
+}

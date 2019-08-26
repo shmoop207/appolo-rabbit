@@ -1,0 +1,51 @@
+{
+  "name": "appolo-rabbit",
+  "description": "cache node dns module",
+  "keywords": [
+    "dns",
+    "dns-cache"
+  ],
+  "author": {
+    "name": "Roman Svichar",
+    "email": "shmoop207@gmail.com"
+  },
+  "engines": {
+    "node": ">= 8.4.x",
+    "npm": ">= 5.3.x"
+  },
+  "scripts": {
+    "test": "mocha test --exit"
+  },
+  "main": "./index.js",
+  "version": "0.0.5",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shmoop207/appolo-rabbit.git"
+  },
+  "readme": "",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "amqplib": "^0.5.5",
+    "appolo-cache": "^6.0.6",
+    "appolo-engine": "^6.0.77",
+    "appolo-event-dispatcher": "^6.0.9",
+    "appolo-utils": "0.0.17",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.5.13",
+    "@types/chai": "^4.2.0",
+    "@types/lodash": "^4.14.136",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.7.1",
+    "@types/sinon": "^7.0.13",
+    "@types/sinon-chai": "^3.2.3",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "sinon": "^7.4.1",
+    "sinon-chai": "^3.3.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.3"
+  }
+}
