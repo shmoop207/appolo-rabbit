@@ -2,7 +2,7 @@
   "name": "appolo-rabbit",
   "description": "cache node dns module",
   "keywords": [
-    "dns",
+    "rabbit",
     "dns-cache"
   ],
   "author": {
@@ -29,7 +29,7 @@
     "amqplib": "^0.5.5",
     "appolo-cache": "^6.0.6",
     "appolo-engine": "^6.0.77",
-    "appolo-event-dispatcher": "^6.0.9",
+    "appolo-event-dispatcher": "^6.0.11",
     "appolo-utils": "0.0.17",
     "lodash": "^4.17.15"
   },

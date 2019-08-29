@@ -1,28 +1,28 @@
 import {define, inject} from 'appolo-engine';
-import {IBindingOptions, IOptions, IQueueOptions} from "./IOptions";
 import * as _ from "lodash";
 import {Promises} from "appolo-utils";
-import {Exchange} from "./exchange";
-import {Queue} from "./queue";
-import {IHandlerFn, IHandlerOptions, IPublishMessage, IRequestMessage} from "./interfaces";
-import {Handler} from "./handler";
-import {requests} from "./requests";
-import {Message} from "./message";
-import {Topology} from "./topology";
-import {Handlers} from "./handlers";
-
+import {Exchange} from "./exchanges/exchange";
+import {Queue} from "./queues/queue";
+import {IHandlerFn, IHandlerOptions, IPublishOptions, IRequestOptions} from "./interfaces";
+import {Handler} from "./handlers/handler";
+import {Message} from "./handlers/message";
+import {Topology} from "./topology/topology";
+import {Handlers} from "./handlers/handlers";
+import {Requests} from "./handlers/requests";
+import {Connection} from "./connection/connection";
+import {Duplex, PassThrough, Readable, Writable} from "stream";
 
 @define()
 export class Rabbit {
 
     @inject() private topology: Topology;
     @inject() private handlers: Handlers;
+    @inject() private requests: Requests;
+    @inject() private connection: Connection;
+
 
     constructor() {
 
-        if (topology.replayQueue) {
-            requests.initialize()
-        }
     }
 
     public initialize() {
@@ -30,26 +30,35 @@ export class Rabbit {
     }
 
     public async connect(): Promise<void> {
-        await this.topology.connect()
+        await this.connection.createConnection();
+
+        await this.topology.createTopology();
     }
 
-    public async publish(exchangeName: string, msg: IPublishMessage) {
+    public async publish(exchangeName: string, msg: IPublishOptions) {
 
         let exchange = this._getExchange(exchangeName);
 
         await exchange.publish(msg);
     }
 
-    public async request<T, K = any>(exchangeName: string, msg: IRequestMessage): Promise<Message<T>> {
+    public async request<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<Message<T>> {
 
         let exchange = this._getExchange(exchangeName);
 
-        return requests.request<T>(exchange, msg)
+        return this.requests.request<T>(exchange, msg)
+    }
+
+    public requestStream<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<PassThrough> {
+
+        let exchange = this._getExchange(exchangeName);
+
+        return  this.requests.requestStream<T>(exchange, msg)
     }
 
     public async subscribe(queueName?: string) {
         if (!queueName) {
-            return Promises.map(topology.queues.values(), queue => this.subscribe(queue.name))
+            return Promises.map(this.topology.queues.values(), queue => this.subscribe(queue.name))
         }
 
         let queue = this._getQueue(queueName);
@@ -60,7 +69,7 @@ export class Rabbit {
 
     public async unSubscribe(queueName?: string) {
         if (!queueName) {
-            return Promises.map(topology.queues.values(), queue => this.unSubscribe(queue.name))
+            return Promises.map(this.topology.queues.values(), queue => this.unSubscribe(queue.name))
         }
 
         let queue = this._getQueue(queueName);
@@ -75,7 +84,7 @@ export class Rabbit {
     }
 
     private _getExchange(exchangeName: string): Exchange {
-        let exchange = topology.exchanges.get(exchangeName);
+        let exchange = this.topology.exchanges.get(exchangeName);
 
         if (!exchange) {
             throw new Error(`failed to find exchange for ${exchange}`)

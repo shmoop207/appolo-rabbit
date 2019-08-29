@@ -3,17 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const appolo_engine_1 = require("appolo-engine");
 const appolo_utils_1 = require("appolo-utils");
-const requests_1 = require("./requests");
 let Rabbit = class Rabbit {
     constructor() {
-        if (topology.replayQueue) {
-            requests_1.requests.initialize();
-        }
     }
     initialize() {
     }
     async connect() {
-        await this.topology.connect();
+        await this.connection.createConnection();
+        await this.topology.createTopology();
     }
     async publish(exchangeName, msg) {
         let exchange = this._getExchange(exchangeName);
@@ -21,18 +18,22 @@ let Rabbit = class Rabbit {
     }
     async request(exchangeName, msg) {
         let exchange = this._getExchange(exchangeName);
-        return requests_1.requests.request(exchange, msg);
+        return this.requests.request(exchange, msg);
+    }
+    requestStream(exchangeName, msg) {
+        let exchange = this._getExchange(exchangeName);
+        return this.requests.requestStream(exchange, msg);
     }
     async subscribe(queueName) {
         if (!queueName) {
-            return appolo_utils_1.Promises.map(topology.queues.values(), queue => this.subscribe(queue.name));
+            return appolo_utils_1.Promises.map(this.topology.queues.values(), queue => this.subscribe(queue.name));
         }
         let queue = this._getQueue(queueName);
         await queue.subscribe();
     }
     async unSubscribe(queueName) {
         if (!queueName) {
-            return appolo_utils_1.Promises.map(topology.queues.values(), queue => this.unSubscribe(queue.name));
+            return appolo_utils_1.Promises.map(this.topology.queues.values(), queue => this.unSubscribe(queue.name));
         }
         let queue = this._getQueue(queueName);
         await queue.unSubscribe();
@@ -42,7 +43,7 @@ let Rabbit = class Rabbit {
         return queue.purgeQueue();
     }
     _getExchange(exchangeName) {
-        let exchange = topology.exchanges.get(exchangeName);
+        let exchange = this.topology.exchanges.get(exchangeName);
         if (!exchange) {
             throw new Error(`failed to find exchange for ${exchange}`);
         }
@@ -66,6 +67,12 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     appolo_engine_1.inject()
 ], Rabbit.prototype, "handlers", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Rabbit.prototype, "requests", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Rabbit.prototype, "connection", void 0);
 Rabbit = tslib_1.__decorate([
     appolo_engine_1.define()
 ], Rabbit);

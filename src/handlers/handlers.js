@@ -2,18 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const message_1 = require("./message");
-const routingKeyParser_1 = require("./routingKeyParser");
 const handler_1 = require("./handler");
-const dispatcher_1 = require("./dispatcher");
 const _ = require("lodash");
 const appolo_engine_1 = require("appolo-engine");
+const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
 let Handlers = class Handlers {
+    //private _handlers = new Map<string, Handler>();
+    //private _handlersByFn = new Map<IHandlerFn, Handler>();
     constructor() {
-        this._handlersByType = new Map();
-        this._handlersByFn = new Map();
+        this._events = new appolo_event_dispatcher_1.EventDispatcher();
     }
     initialize() {
-        dispatcher_1.dispatcher.onMessageEvent.on(this._handleMessage, this);
+        this.dispatcher.onMessageEvent.on(this._handleMessage, this);
     }
     addHandler(options, handlerFn, queueName) {
         let otps = options;
@@ -22,58 +22,47 @@ let Handlers = class Handlers {
         }
         let handler = new handler_1.Handler(otps);
         let key = this._getRoutingKey(handler);
-        if (routingKeyParser_1.routingKeyParser.isRoutingRoute(key)) {
-            this._handlersByFn.set(handler.handlerFn, handler);
-        }
-        else {
-            this._handlersByType.set(key, handler);
-        }
-        handler.onRemove.once(this._onRemove, this);
+        let fn = (message) => this._onMessageHandler(message, handler);
+        this._events.on(key, fn);
+        handler.onRemove.once((handler) => this._onRemove(handler, fn), this);
         return handler;
     }
     _getRoutingKey(handler) {
         return `${handler.options.queue}.${handler.options.type}`;
     }
-    _onRemove(handler) {
+    _onRemove(handler, fn) {
         let key = this._getRoutingKey(handler);
-        this._handlersByType.delete(key);
-        this._handlersByFn.delete(handler.handlerFn);
+        this._events.un(key, fn);
     }
     _handleMessage(opts) {
         let message = new message_1.Message(opts.queue, opts.message);
         let key = `${message.queue}.${message.type}`;
-        let handler = this._findHandler(key);
-        if (!handler) {
+        let hasHandler = this._events.hasListener(key);
+        if (!hasHandler) {
             //TODO handle un handled
         }
+        this._events.fireEvent(key, message);
+    }
+    _onMessageHandler(message, handler) {
         try {
-            message.serializeBody();
+            message.body = this.serializers.getSerializer(message.properties.contentType)
+                .deserialize(message.content, message.properties.contentEncoding);
             handler.handlerFn.apply(handler.options.context, [message]);
         }
         catch (e) {
             handler.options.errorHandler.apply(handler.options.context, [e, message]);
         }
     }
-    _findHandler(type) {
-        let handler = this._handlersByType.get(type);
-        if (handler !== undefined) {
-            return handler;
-        }
-        for (let handlerInner of this._handlersByFn.values()) {
-            let key = this._getRoutingKey(handlerInner);
-            if (routingKeyParser_1.routingKeyParser.test(key, type)) {
-                this._handlersByType.set(type, handlerInner);
-                handler = handlerInner;
-                break;
-            }
-        }
-        //we didnt find any handler set null;
-        if (!handler) {
-            this._handlersByType.set(type, null);
-        }
-        return handler;
-    }
 };
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Handlers.prototype, "dispatcher", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Handlers.prototype, "serializers", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.initMethod()
+], Handlers.prototype, "initialize", null);
 Handlers = tslib_1.__decorate([
     appolo_engine_1.define(),
     appolo_engine_1.singleton()

@@ -16,5 +16,4 @@ Dispatcher = tslib_1.__decorate([
     appolo_engine_1.singleton()
 ], Dispatcher);
 exports.Dispatcher = Dispatcher;
-exports.dispatcher = new Dispatcher();
 //# sourceMappingURL=dispatcher.js.map

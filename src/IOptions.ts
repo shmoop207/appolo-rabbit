@@ -1,4 +1,3 @@
-import amqplib = require('amqplib');
 
 export interface IOptions {
     connection: IConnectionOptions

@@ -1,6 +1,6 @@
-import {IHandlerErrorFn, IHandlerFn, IHandlerOptions} from "./interfaces";
+import {IHandlerErrorFn, IHandlerFn, IHandlerOptions} from "../interfaces";
 import {Event} from "appolo-event-dispatcher";
-import {HandlerDefaults} from "./defaults";
+import {HandlerDefaults} from "../defaults";
 
 export class Handler {
 

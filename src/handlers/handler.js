@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
-const defaults_1 = require("./defaults");
+const defaults_1 = require("../defaults");
 class Handler {
     constructor(_options) {
         this._options = _options;

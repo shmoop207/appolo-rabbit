@@ -1,6 +1,6 @@
 import {IExchangeOptions, IOptions, IQueueOptions} from "./IOptions";
 import {IHandlerOptions} from "./interfaces";
-import {Message} from "./message";
+import {Message} from "./handlers/message";
 import {Options} from "amqplib";
 
 

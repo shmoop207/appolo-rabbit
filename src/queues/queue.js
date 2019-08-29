@@ -1,21 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const appolo_utils_1 = require("appolo-utils");
-const channel_1 = require("./channel");
-const dispatcher_1 = require("./dispatcher");
-const serializersFactory_1 = require("./serializers/serializersFactory");
-class Queue {
-    constructor(_connection, _options) {
+const channel_1 = require("../channels/channel");
+const appolo_engine_1 = require("appolo-engine");
+let Queue = class Queue {
+    constructor(_options) {
         this._options = _options;
-        this._channel = new channel_1.Channel(_connection, { confirm: false });
-    }
-    get options() {
-        return this._options;
-    }
-    get channel() {
-        return this._channel;
     }
     async connect() {
+        this._channel = await this.createChanel({ confirm: false });
         await this._channel.create();
         await Promise.all([
             this._channel.assertQueue(this._options.name, this._options),
@@ -27,6 +21,9 @@ class Queue {
     }
     get name() {
         return this._options.name;
+    }
+    get noAck() {
+        return !!this._options.noAck;
     }
     async bind(exchange, keys) {
         await appolo_utils_1.Promises.map(keys, key => this._channel.bindQueue(this._options.name, exchange, key));
@@ -43,19 +40,41 @@ class Queue {
         return result;
     }
     _onMessage(message) {
-        dispatcher_1.dispatcher.onMessageEvent.fireEvent({ message, queue: this });
+        this.dispatcher.onMessageEvent.fireEvent({ message, queue: this });
     }
-    reply(message, data) {
+    ack(msg) {
+        this._channel.ack(msg);
+    }
+    nack(msg) {
+        this._channel.nack(msg);
+    }
+    reject(msg, requeue) {
+        this._channel.reject(msg, requeue);
+    }
+    reply(message, data, options) {
         let dto = {
             timestamp: Date.now(),
             messageId: appolo_utils_1.Guid.guid(),
             contentEncoding: "utf8",
             correlationId: message.properties.correlationId,
-            contentType: serializersFactory_1.serializersFactory.getContentType(data)
+            contentType: this.serializers.getContentType(data)
         };
-        let content = serializersFactory_1.serializersFactory.getSerializer(dto.contentType).serialize(data);
-        this.channel.sendToQueue(message.properties.replyTo, content, dto);
+        dto = Object.assign({}, options || {}, dto);
+        let content = this.serializers.getSerializer(dto.contentType).serialize(data);
+        this._channel.sendToQueue(message.properties.replyTo, content, dto);
     }
-}
+};
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Queue.prototype, "dispatcher", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Queue.prototype, "serializers", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.injectFactoryMethod(channel_1.Channel)
+], Queue.prototype, "createChanel", void 0);
+Queue = tslib_1.__decorate([
+    appolo_engine_1.define()
+], Queue);
 exports.Queue = Queue;
 //# sourceMappingURL=queue.js.map

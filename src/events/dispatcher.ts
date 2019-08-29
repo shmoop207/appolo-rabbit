@@ -1,6 +1,6 @@
 import {Event} from "appolo-event-dispatcher";
 import {ConsumeMessage} from "amqplib";
-import {Queue} from "./queue";
+import {Queue} from "../queues/queue";
 
 import {define, inject, singleton} from 'appolo-engine';
 
@@ -14,4 +14,3 @@ export class Dispatcher {
     }
 }
 
-export const dispatcher = new Dispatcher();

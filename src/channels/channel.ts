@@ -2,26 +2,32 @@ import {
     ConsumeMessage,
     Channel as amqpChannel,
     ConfirmChannel,
-    Connection,
     Options,
     Replies, Message
 } from "amqplib";
-import {IChanelOptions} from "./IOptions";
+import {IChanelOptions, IExchangeOptions} from "../IOptions";
+import {define, inject, injectFactoryMethod} from 'appolo-engine';
+import {Connection} from "../connection/connection";
+import {Exchange} from "../exchanges/exchange";
+import * as _ from "lodash";
+import {IPublishOptions} from "../interfaces";
 
+@define()
 export class Channel {
 
     private _channel: amqpChannel | ConfirmChannel;
     private _consumerTag: string;
 
+    @inject() private connection: Connection;
 
-    constructor(private _connection: Connection, private _options: IChanelOptions) {
+    constructor(private _options: IChanelOptions) {
 
     }
 
     public async create() {
         this._channel = await (this._options.confirm
-            ? this._connection.createConfirmChannel()
-            : this._connection.createConfirmChannel());
+            ? this.connection.createConfirmChannel()
+            : this.connection.createChannel());
 
         this._channel.on('close', () => this._onChannelClose());
         this._channel.on('error', (e) => this._onChannelError(e));
@@ -80,6 +86,22 @@ export class Channel {
         this._channel.sendToQueue(queue, content, options)
     }
 
+    public assertExchange(opts: IExchangeOptions): Promise<Replies.AssertExchange> {
+        return this._channel.assertExchange(opts.name, opts.type, _.omit(opts, ["name", "type"]));
+    }
+
+    public publish(exchange: string, routingKey: string, content: Buffer, options: Options.Publish & { confirm?: boolean }): Promise<void> {
+
+        if (options.confirm !== undefined ? options.confirm : this._options.confirm) {
+            return new Promise<void>((resolve, reject) => {
+                this._channel.publish(exchange, routingKey, content, options, (err, ok) => err ? reject(err) : resolve())
+            })
+        }
+
+        this._channel.publish(exchange, routingKey, content, options);
+
+        return Promise.resolve();
+    }
 
     private _onChannelClose() {
         console.log("error")

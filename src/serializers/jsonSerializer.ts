@@ -1,5 +1,9 @@
 import {ISerializer} from "./ISerializer";
+import {define, inject, singleton,alias} from 'appolo-engine';
 
+@define()
+@singleton()
+@alias("ISerializer")
 export class JsonSerializer implements ISerializer {
 
     public get contentType(): string {

@@ -1,5 +1,5 @@
 import {Rabbit} from "./src/rabbit"
-import {Message} from "./src/message"
+import {Message} from "./src/handlers/message"
 import {IOptions} from "./src/IOptions";
 import {App, createApp} from 'appolo-engine';
 
@@ -10,7 +10,7 @@ export async function createRabbit(options: IOptions) {
 
     app.injector.addObject("options", options);
 
-    await app.launch()
+    await app.launch();
 
     let rabbit = app.injector.get<Rabbit>(Rabbit, [options])
 

@@ -1,4 +1,5 @@
-import {Message} from "./message";
+import {Message} from "./handlers/message";
+import {RequestError} from "./errors/requestError";
 
 export interface IMessage<T> {
     fields: {
@@ -29,11 +30,13 @@ export interface IMessage<T> {
 
     reject(requeue: boolean): void
 
-    reply(data?: any): void
+    replyResolve(data?: any)
+
+    replyReject(e: RequestError<T>)
 
 }
 
-export interface IPublishMessage {
+export interface IPublishOptions {
     expiration?: string | number;
     userId?: string;
     CC?: string | string[];
@@ -55,9 +58,10 @@ export interface IPublishMessage {
     appId?: string;
     body: any;
     routingKey?: string
+    confirm?: boolean;
 }
 
-export interface IRequestMessage extends IPublishMessage {
+export interface IRequestOptions extends IPublishOptions {
     replyTimeout?: number
 }
 
@@ -74,3 +78,8 @@ export interface IHandlerOptions {
 }
 
 
+export enum StreamStatus {
+    Chunk = "chunk",
+    Finish = "finish",
+    Error = "error"
+}
