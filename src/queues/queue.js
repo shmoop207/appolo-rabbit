@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const appolo_utils_1 = require("appolo-utils");
-const channel_1 = require("../channels/channel");
+const channel_1 = require("../channel/channel");
 const appolo_engine_1 = require("appolo-engine");
 let Queue = class Queue {
     constructor(_options) {
@@ -29,6 +29,10 @@ let Queue = class Queue {
         await appolo_utils_1.Promises.map(keys, key => this._channel.bindQueue(this._options.name, exchange, key));
     }
     async subscribe() {
+        if (this._isSubscribed) {
+            return;
+        }
+        this._isSubscribed = true;
         let opts = { noAck: !!this._options.noAck };
         await this._channel.consume(this._options.name, (msg) => this._onMessage(msg), opts);
     }

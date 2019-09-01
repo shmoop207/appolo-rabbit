@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const interfaces_1 = require("../interfaces");
 const stream_1 = require("stream");
+const IPublishOptions_1 = require("../exchanges/IPublishOptions");
 class Message {
     constructor(_queue, _msg) {
         this._queue = _queue;
@@ -15,13 +15,13 @@ class Message {
         }
     }
     _onStreamWrite(chunk) {
-        this._reply(chunk, { headers: { "x-reply-stream-status": interfaces_1.StreamStatus.Chunk } });
+        this._reply(chunk, { headers: { "x-reply-stream-status": IPublishOptions_1.StreamStatus.Chunk } });
     }
     _onStreamFinish() {
-        this._reply("", { headers: { "x-reply-stream-status": interfaces_1.StreamStatus.Finish } });
+        this._reply("", { headers: { "x-reply-stream-status": IPublishOptions_1.StreamStatus.Finish } });
     }
     _onStreamError(err) {
-        this._reply(err.toString(), { headers: { "x-reply-stream-status": interfaces_1.StreamStatus.Error } });
+        this._reply(err.toString(), { headers: { "x-reply-stream-status": IPublishOptions_1.StreamStatus.Error } });
     }
     get fields() {
         return this._msg.fields;
@@ -94,4 +94,8 @@ class Message {
     }
 }
 exports.Message = Message;
+//TODO handle unhandled
+//TODO refactor interfaces and defaults
+//TODO handle disconnect
+//TODO handle close
 //# sourceMappingURL=message.js.map

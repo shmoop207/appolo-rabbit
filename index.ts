@@ -1,6 +1,6 @@
 import {Rabbit} from "./src/rabbit"
-import {Message} from "./src/handlers/message"
-import {IOptions} from "./src/IOptions";
+import {Message} from "./src/messages/message"
+import {IOptions} from "./src/common/IOptions";
 import {App, createApp} from 'appolo-engine';
 
 export {Rabbit, Message}

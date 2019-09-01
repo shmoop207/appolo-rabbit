@@ -1,19 +1,20 @@
-import {IPublishOptions, IRequestOptions, StreamStatus} from "../interfaces";
 import {Exchange} from "../exchanges/exchange";
 import {Topology} from "../topology/topology";
-import {Message} from "./message";
-import {Handlers} from "./handlers";
+import {Message} from "../messages/message";
+import {Handlers} from "../handlers/handlers";
 import {Promises, Deferred, Guid} from "appolo-utils";
 import * as _ from "lodash";
 import Timeout = NodeJS.Timeout;
 import {define, inject, singleton, initMethod} from 'appolo-engine';
 import {Duplex, PassThrough, Readable} from 'stream';
 import {RequestError} from "../errors/requestError";
+import {IRequestOptions, StreamStatus} from "../exchanges/IPublishOptions";
+import {IRequest} from "./IRequest";
 
 @define()
 @singleton()
 export class Requests {
-    private _outgoingRequests: Map<string, { timeout: Timeout, deferred?: Deferred<any>, stream?: PassThrough }> = new Map();
+    private _outgoingRequests: Map<string, IRequest> = new Map();
 
     @inject() private topology: Topology;
     @inject() private handlers: Handlers;
@@ -111,31 +112,39 @@ export class Requests {
 
         if (request.stream) {
 
-            switch (msg.properties.headers["x-reply-stream-status"]) {
-                case StreamStatus.Chunk:
-                    request.stream.write(msg.content);
-                    break;
-                case StreamStatus.Finish:
-                    this._finishReply(msg.properties.correlationId, request.timeout);
-                    request.stream.end();
-                    break;
-                case StreamStatus.Error:
-                    this._finishReply(msg.properties.correlationId, request.timeout);
-                    request.stream.emit("error", msg.body);
-                    break;
-            }
+            this._handleStreamReply(msg, request)
 
         } else {
-            this._finishReply(msg.properties.correlationId, request.timeout);
+            this._handlePromiseReply(msg, request)
+        }
+    }
 
-            if (msg.body.success) {
-                request.deferred.resolve(msg);
-            } else {
+    private _handlePromiseReply(msg: Message<any>, request: IRequest) {
+        this._finishReply(msg.properties.correlationId, request.timeout);
 
-                let error = new RequestError(_.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message, msg);
+        if (msg.body.success) {
+            request.deferred.resolve(msg);
+        } else {
 
-                request.deferred.reject(error);
-            }
+            let error = new RequestError(_.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message, msg);
+
+            request.deferred.reject(error);
+        }
+    }
+
+    private _handleStreamReply(msg: Message<any>, request: IRequest) {
+        switch (msg.properties.headers["x-reply-stream-status"]) {
+            case StreamStatus.Chunk:
+                request.stream.write(msg.content);
+                break;
+            case StreamStatus.Finish:
+                this._finishReply(msg.properties.correlationId, request.timeout);
+                request.stream.end();
+                break;
+            case StreamStatus.Error:
+                this._finishReply(msg.properties.correlationId, request.timeout);
+                request.stream.emit("error", msg.body);
+                break;
         }
     }
 

@@ -1,4 +1,4 @@
-import {Message} from "./../handlers/message";
+import {Message} from "../messages/message";
 
 export class RequestError<T> extends Error {
 

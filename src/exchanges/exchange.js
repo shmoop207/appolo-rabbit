@@ -4,7 +4,7 @@ const tslib_1 = require("tslib");
 const _ = require("lodash");
 const appolo_utils_1 = require("appolo-utils");
 const appolo_engine_1 = require("appolo-engine");
-const channel_1 = require("../channels/channel");
+const channel_1 = require("../channel/channel");
 let Exchange = class Exchange {
     constructor(_options) {
         this._options = _options;

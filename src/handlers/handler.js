@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
-const defaults_1 = require("../defaults");
+const handlerDefaults_1 = require("./handlerDefaults");
 class Handler {
     constructor(_options) {
         this._options = _options;
         this._onRemove = new appolo_event_dispatcher_1.Event();
-        this._options = Object.assign({}, defaults_1.HandlerDefaults, _options);
+        this._options = Object.assign({}, handlerDefaults_1.HandlerDefaults, _options);
     }
     get onRemove() {
         return this._onRemove;

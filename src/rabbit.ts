@@ -3,14 +3,15 @@ import * as _ from "lodash";
 import {Promises} from "appolo-utils";
 import {Exchange} from "./exchanges/exchange";
 import {Queue} from "./queues/queue";
-import {IHandlerFn, IHandlerOptions, IPublishOptions, IRequestOptions} from "./interfaces";
 import {Handler} from "./handlers/handler";
-import {Message} from "./handlers/message";
+import {Message} from "./messages/message";
 import {Topology} from "./topology/topology";
 import {Handlers} from "./handlers/handlers";
-import {Requests} from "./handlers/requests";
+import {Requests} from "./requests/requests";
 import {Connection} from "./connection/connection";
 import {Duplex, PassThrough, Readable, Writable} from "stream";
+import {IHandlerFn, IHandlerOptions} from "./handlers/IHandlerOptions";
+import {IPublishOptions, IRequestOptions} from "./exchanges/IPublishOptions";
 
 @define()
 export class Rabbit {
@@ -35,6 +36,10 @@ export class Rabbit {
         await this.topology.createTopology();
     }
 
+    public onUnhandled(handler: IHandlerFn) {
+        this.handlers.onUnhandled(handler);
+    }
+
     public async publish(exchangeName: string, msg: IPublishOptions) {
 
         let exchange = this._getExchange(exchangeName);
@@ -53,7 +58,7 @@ export class Rabbit {
 
         let exchange = this._getExchange(exchangeName);
 
-        return  this.requests.requestStream<T>(exchange, msg)
+        return this.requests.requestStream<T>(exchange, msg)
     }
 
     public async subscribe(queueName?: string) {

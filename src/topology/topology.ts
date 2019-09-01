@@ -1,20 +1,20 @@
-import {IBindingOptions, IExchangeOptions, IOptions, IQueueOptions} from "../IOptions";
+import {IOptions} from "../common/IOptions";
 import {define, singleton, inject, initMethod, injectFactoryMethod} from 'appolo-engine';
 import * as _ from "lodash";
 import {
-    ConnectionsDefaults,
     Defaults,
-    ExchangeDefaults,
-    QueueDefaults,
-    ReplyQueueDefaults,
-    RequestQueueDefaults
-} from "../defaults";
+} from "../common/defaults";
 import amqplib = require('amqplib');
 import {Exchange} from "../exchanges/exchange";
 import {Queue} from "../queues/queue";
 import {Promises} from "appolo-utils/lib/promises";
 import {Options} from "amqplib";
 import {Connection} from "../connection/connection";
+import {IExchangeOptions} from "../exchanges/IExchangeOptions";
+import {ExchangeDefaults} from "../exchanges/exchangeDefaults";
+import {IBindingOptions, IQueueOptions} from "../queues/IQueueOptions";
+import {QueueDefaults, ReplyQueueDefaults} from "../queues/queueDefaults";
+import {IHandlerFn} from "../handlers/IHandlerOptions";
 
 @define()
 @singleton()
@@ -41,7 +41,6 @@ export class Topology {
 
         await this._bindKeys();
     }
-
 
     private _createExchanges() {
         return Promises.map(this._options.exchanges, item => this._createExchange(item));

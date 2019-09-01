@@ -1,17 +1,18 @@
 import amqplib = require('amqplib');
-import {IChanelOptions, IExchangeOptions} from "../IOptions";
 import * as _ from "lodash";
 import {Guid} from "appolo-utils";
 import {Options} from "amqplib";
-import {IPublishOptions} from "../interfaces";
 import {Serializers} from "../serializers/serializers";
 import {define, inject, injectFactoryMethod} from 'appolo-engine';
-import {Channel} from "../channels/channel";
+import {Channel} from "../channel/channel";
+import {IExchangeOptions} from "./IExchangeOptions";
+import {IChannelOptions} from "../channel/IChannelOptions";
+import {IPublishOptions} from "./IPublishOptions";
 
 @define()
 export class Exchange {
 
-    @injectFactoryMethod(Channel) private createChanel: (opts: IChanelOptions) => Channel;
+    @injectFactoryMethod(Channel) private createChanel: (opts: IChannelOptions) => Channel;
     @inject() private serializers: Serializers;
 
 

@@ -5,12 +5,12 @@ import {
     Options,
     Replies, Message
 } from "amqplib";
-import {IChanelOptions, IExchangeOptions} from "../IOptions";
 import {define, inject, injectFactoryMethod} from 'appolo-engine';
 import {Connection} from "../connection/connection";
 import {Exchange} from "../exchanges/exchange";
 import * as _ from "lodash";
-import {IPublishOptions} from "../interfaces";
+import {IExchangeOptions} from "../exchanges/IExchangeOptions";
+import {IChannelOptions} from "./IChannelOptions";
 
 @define()
 export class Channel {
@@ -20,7 +20,7 @@ export class Channel {
 
     @inject() private connection: Connection;
 
-    constructor(private _options: IChanelOptions) {
+    constructor(private _options: IChannelOptions) {
 
     }
 

@@ -12,6 +12,9 @@ let Rabbit = class Rabbit {
         await this.connection.createConnection();
         await this.topology.createTopology();
     }
+    onUnhandled(handler) {
+        this.handlers.onUnhandled(handler);
+    }
     async publish(exchangeName, msg) {
         let exchange = this._getExchange(exchangeName);
         await exchange.publish(msg);

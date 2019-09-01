@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const appolo_engine_1 = require("appolo-engine");
-const defaults_1 = require("../defaults");
+const defaults_1 = require("../common/defaults");
 const exchange_1 = require("../exchanges/exchange");
 const queue_1 = require("../queues/queue");
 const promises_1 = require("appolo-utils/lib/promises");
+const exchangeDefaults_1 = require("../exchanges/exchangeDefaults");
+const queueDefaults_1 = require("../queues/queueDefaults");
 let Topology = class Topology {
     constructor() {
         this._exchanges = new Map();
@@ -23,20 +25,20 @@ let Topology = class Topology {
         return promises_1.Promises.map(this._options.exchanges, item => this._createExchange(item));
     }
     _createExchange(opts) {
-        opts = Object.assign({}, defaults_1.ExchangeDefaults, opts);
+        opts = Object.assign({}, exchangeDefaults_1.ExchangeDefaults, opts);
         let exchange = this.createExchange(opts);
         this._exchanges.set(opts.name, exchange);
         return exchange.connect();
     }
     async _createQueues() {
         await promises_1.Promises.map(this._options.queues, opts => {
-            opts = Object.assign({}, defaults_1.QueueDefaults, opts);
+            opts = Object.assign({}, queueDefaults_1.QueueDefaults, opts);
             return this._createQueue(opts);
         });
     }
     async _createRequestQueues() {
         await promises_1.Promises.map(this._options.requestQueues, opts => {
-            opts = Object.assign({}, defaults_1.ReplyQueueDefaults, opts);
+            opts = Object.assign({}, queueDefaults_1.ReplyQueueDefaults, opts);
             return this._createQueue(opts);
         });
     }
@@ -44,7 +46,7 @@ let Topology = class Topology {
         if (!this._options.replyQueue) {
             return;
         }
-        let opts = Object.assign({}, defaults_1.ReplyQueueDefaults, this._options.replyQueue);
+        let opts = Object.assign({}, queueDefaults_1.ReplyQueueDefaults, this._options.replyQueue);
         await this._createQueue(opts);
     }
     _createQueue(opts) {

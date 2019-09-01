@@ -1,19 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const message_1 = require("./message");
+const message_1 = require("../messages/message");
 const handler_1 = require("./handler");
 const _ = require("lodash");
 const appolo_engine_1 = require("appolo-engine");
 const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
 let Handlers = class Handlers {
-    //private _handlers = new Map<string, Handler>();
-    //private _handlersByFn = new Map<IHandlerFn, Handler>();
     constructor() {
         this._events = new appolo_event_dispatcher_1.EventDispatcher();
     }
     initialize() {
         this.dispatcher.onMessageEvent.on(this._handleMessage, this);
+    }
+    onUnhandled(handler) {
+        this._onUnhandled = handler;
     }
     addHandler(options, handlerFn, queueName) {
         let otps = options;
@@ -39,7 +40,8 @@ let Handlers = class Handlers {
         let key = `${message.queue}.${message.type}`;
         let hasHandler = this._events.hasListener(key);
         if (!hasHandler) {
-            //TODO handle un handled
+            let fn = this._onUnhandled || this.options.onUnhandled;
+            fn(message);
         }
         this._events.fireEvent(key, message);
     }
@@ -60,6 +62,9 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     appolo_engine_1.inject()
 ], Handlers.prototype, "serializers", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Handlers.prototype, "options", void 0);
 tslib_1.__decorate([
     appolo_engine_1.initMethod()
 ], Handlers.prototype, "initialize", null);

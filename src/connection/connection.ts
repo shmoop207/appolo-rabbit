@@ -2,8 +2,8 @@ import {define, inject, singleton} from 'appolo-engine';
 import url = require("url");
 import {Options, connect, Connection as AmqplibConnection, Channel, ConfirmChannel} from "amqplib";
 import * as _ from "lodash";
-import {ConnectionsDefaults} from "../defaults";
-import {IOptions} from "../IOptions";
+import {IOptions} from "../common/IOptions";
+import {ConnectionsDefaults} from "./connectionsDefaults";
 
 @define()
 @singleton()

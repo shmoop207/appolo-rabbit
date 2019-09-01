@@ -1,9 +1,9 @@
-import {IMessage, IPublishOptions} from "../interfaces";
 import {ConsumeMessage, Channel} from "amqplib";
-import {StreamStatus} from "../interfaces";
 import {Queue} from "../queues/queue";
 import {PassThrough} from "stream";
 import {RequestError} from "../errors/requestError";
+import {IMessage} from "./IMessage";
+import {IPublishOptions, StreamStatus} from "../exchanges/IPublishOptions";
 
 export class Message<T> implements IMessage<T> {
 
@@ -124,3 +124,9 @@ export class Message<T> implements IMessage<T> {
         return this._stream;
     }
 }
+
+
+//TODO handle unhandled
+//TODO refactor interfaces and defaults
+//TODO handle disconnect
+//TODO handle close

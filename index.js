@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const rabbit_1 = require("./src/rabbit");
 exports.Rabbit = rabbit_1.Rabbit;
-const message_1 = require("./src/handlers/message");
+const message_1 = require("./src/messages/message");
 exports.Message = message_1.Message;
 const appolo_engine_1 = require("appolo-engine");
 async function createRabbit(options) {

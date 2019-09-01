@@ -1,6 +1,5 @@
 import {Queue} from "../queues/queue";
-import {IHandlerFn, IHandlerOptions} from "../interfaces";
-import {Message} from "./message";
+import {Message} from "../messages/message";
 import {Handler} from "./handler";
 import {ConsumeMessage} from "amqplib";
 import * as _ from "lodash";
@@ -8,6 +7,8 @@ import {define, inject, singleton, initMethod} from 'appolo-engine';
 import {Serializers} from "../serializers/serializers";
 import {Dispatcher} from "../events/dispatcher";
 import {EventDispatcher} from "appolo-event-dispatcher";
+import {IHandlerFn, IHandlerOptions} from "./IHandlerOptions";
+import {IOptions} from "../common/IOptions";
 
 @define()
 @singleton()
@@ -15,12 +16,11 @@ export class Handlers {
 
     @inject() private dispatcher: Dispatcher;
     @inject() private serializers: Serializers;
+    @inject() private options: IOptions;
 
     private _events = new EventDispatcher();
+    private _onUnhandled: IHandlerFn;
 
-
-    //private _handlers = new Map<string, Handler>();
-    //private _handlersByFn = new Map<IHandlerFn, Handler>();
 
     constructor() {
 
@@ -30,6 +30,10 @@ export class Handlers {
     @initMethod()
     public initialize() {
         this.dispatcher.onMessageEvent.on(this._handleMessage, this)
+    }
+
+    public onUnhandled(handler: IHandlerFn) {
+        this._onUnhandled = handler;
     }
 
 
@@ -75,7 +79,9 @@ export class Handlers {
         let hasHandler = this._events.hasListener(key);
 
         if (!hasHandler) {
-            //TODO handle un handled
+            let fn = this._onUnhandled || this.options.onUnhandled;
+
+            fn(message);
         }
 
         this._events.fireEvent(key, message)
@@ -96,32 +102,6 @@ export class Handlers {
             handler.options.errorHandler.apply(handler.options.context, [e, message])
         }
     }
-
-    // private _findHandler(type: string): Handler {
-    //     let handler = this._handlersByType.get(type);
-    //
-    //     if (handler !== undefined) {
-    //         return handler;
-    //     }
-    //
-    //     for (let handlerInner of this._handlersByFn.values()) {
-    //
-    //         let key = this._getRoutingKey(handlerInner);
-    //
-    //         if (routingKeyParser.test(key, type)) {
-    //
-    //             this._handlersByType.set(type, handlerInner);
-    //             handler = handlerInner;
-    //             break;
-    //         }
-    //     }
-    //     //we didnt find any handler set null;
-    //     if (!handler) {
-    //         this._handlersByType.set(type, null);
-    //     }
-    //
-    //     return handler;
-    // }
 
 
 }
