@@ -36,19 +36,22 @@ let Channel = class Channel {
         return this._channel.purgeQueue(queue);
     }
     ack(message, allUpTo) {
-        if (message.fields.consumerTag == this._consumerTag) {
+        if (this._isValidConsumerTag(message)) {
             this._channel.ack(message, allUpTo);
         }
     }
     nack(message, allUpTo, requeue) {
-        if (message.fields.consumerTag == this._consumerTag) {
+        if (this._isValidConsumerTag(message)) {
             this._channel.nack(message, allUpTo, requeue);
         }
     }
     reject(message, requeue) {
-        if (message.fields.consumerTag == this._consumerTag) {
+        if (this._isValidConsumerTag(message)) {
             this._channel.reject(message, requeue);
         }
+    }
+    _isValidConsumerTag(message) {
+        return !this._consumerTag || message.fields.consumerTag == this._consumerTag;
     }
     sendToQueue(queue, content, options) {
         this._channel.sendToQueue(queue, content, options);
@@ -66,15 +69,23 @@ let Channel = class Channel {
         return Promise.resolve();
     }
     _onChannelClose() {
-        console.log("error");
+        this.dispatcher.channelCloseEvent.fireEvent({ channel: this });
+        this._clear();
     }
     _onChannelError(e) {
-        console.log("error", e);
+        this.dispatcher.channelErrorEvent.fireEvent({ channel: this, error: e });
+        this._clear();
+    }
+    _clear() {
+        this._channel.removeAllListeners();
     }
 };
 tslib_1.__decorate([
     appolo_engine_1.inject()
 ], Channel.prototype, "connection", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Channel.prototype, "dispatcher", void 0);
 Channel = tslib_1.__decorate([
     appolo_engine_1.define()
 ], Channel);

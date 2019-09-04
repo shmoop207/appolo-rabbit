@@ -81,7 +81,7 @@ export class Queue {
 
     private _onMessage(message: ConsumeMessage) {
 
-        this.dispatcher.onMessageEvent.fireEvent({message, queue: this});
+        this.dispatcher.queueMessageEvent.fireEvent({message, queue: this});
     }
 
     public ack(msg: ConsumeMessage) {

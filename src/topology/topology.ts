@@ -13,7 +13,7 @@ import {Connection} from "../connection/connection";
 import {IExchangeOptions} from "../exchanges/IExchangeOptions";
 import {ExchangeDefaults} from "../exchanges/exchangeDefaults";
 import {IBindingOptions, IQueueOptions} from "../queues/IQueueOptions";
-import {QueueDefaults, ReplyQueueDefaults} from "../queues/queueDefaults";
+import {QueueDefaults, ReplyQueueDefaults, RequestQueueDefaults} from "../queues/queueDefaults";
 import {IHandlerFn} from "../handlers/IHandlerOptions";
 
 @define()
@@ -68,7 +68,7 @@ export class Topology {
     private async _createRequestQueues() {
 
         await Promises.map(this._options.requestQueues, opts => {
-            opts = Object.assign({}, ReplyQueueDefaults, opts);
+            opts = Object.assign({}, RequestQueueDefaults, opts);
             return this._createQueue(opts)
         });
     }

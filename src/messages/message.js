@@ -94,8 +94,7 @@ class Message {
     }
 }
 exports.Message = Message;
-//TODO handle unhandled
-//TODO refactor interfaces and defaults
 //TODO handle disconnect
 //TODO handle close
+//TODO publish timeout
 //# sourceMappingURL=message.js.map

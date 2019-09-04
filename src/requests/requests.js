@@ -69,7 +69,7 @@ let Requests = class Requests {
     _handlePromiseReply(msg, request) {
         this._finishReply(msg.properties.correlationId, request.timeout);
         if (msg.body.success) {
-            request.deferred.resolve(msg);
+            request.deferred.resolve(msg.body.data);
         }
         else {
             let error = new requestError_1.RequestError(_.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message, msg);

@@ -72,7 +72,7 @@ export class Requests {
 
     }
 
-    public async request<T>(exchange: Exchange, msg: IRequestOptions): Promise<Message<T>> {
+    public async request<T>(exchange: Exchange, msg: IRequestOptions): Promise<T> {
 
         if (!this.topology.hasReplyQueue) {
             throw new Error(`reply queue not defined`)
@@ -90,7 +90,7 @@ export class Requests {
 
         await exchange.publish(dto);
 
-        let deferred = Promises.defer<Message<T>>();
+        let deferred = Promises.defer<T>();
         let timeout: Timeout = null;
 
         if (msg.replyTimeout) {
@@ -123,7 +123,7 @@ export class Requests {
         this._finishReply(msg.properties.correlationId, request.timeout);
 
         if (msg.body.success) {
-            request.deferred.resolve(msg);
+            request.deferred.resolve(msg.body.data);
         } else {
 
             let error = new RequestError(_.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message, msg);

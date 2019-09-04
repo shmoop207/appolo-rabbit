@@ -126,7 +126,6 @@ export class Message<T> implements IMessage<T> {
 }
 
 
-//TODO handle unhandled
-//TODO refactor interfaces and defaults
 //TODO handle disconnect
 //TODO handle close
+//TODO publish timeout

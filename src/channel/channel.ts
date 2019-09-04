@@ -7,7 +7,7 @@ import {
 } from "amqplib";
 import {define, inject, injectFactoryMethod} from 'appolo-engine';
 import {Connection} from "../connection/connection";
-import {Exchange} from "../exchanges/exchange";
+import {Dispatcher} from "../events/dispatcher";
 import * as _ from "lodash";
 import {IExchangeOptions} from "../exchanges/IExchangeOptions";
 import {IChannelOptions} from "./IChannelOptions";
@@ -19,6 +19,7 @@ export class Channel {
     private _consumerTag: string;
 
     @inject() private connection: Connection;
+    @inject() private dispatcher: Dispatcher;
 
     constructor(private _options: IChannelOptions) {
 
@@ -42,7 +43,6 @@ export class Channel {
     }
 
     public async consume(queue: string, onMessage: (msg: ConsumeMessage | null) => any, options?: Options.Consume): Promise<void> {
-
         let {consumerTag} = await this._channel.consume(queue, onMessage, options);
 
         this._consumerTag = consumerTag;
@@ -64,22 +64,27 @@ export class Channel {
     }
 
     public ack(message: Message, allUpTo?: boolean): void {
-        if (message.fields.consumerTag == this._consumerTag) {
+
+        if (this._isValidConsumerTag(message)) {
             this._channel.ack(message, allUpTo);
         }
 
     }
 
     public nack(message: Message, allUpTo?: boolean, requeue?: boolean): void {
-        if (message.fields.consumerTag == this._consumerTag) {
+        if (this._isValidConsumerTag(message)) {
             this._channel.nack(message, allUpTo, requeue);
         }
     }
 
     public reject(message: Message, requeue?: boolean): void {
-        if (message.fields.consumerTag == this._consumerTag) {
+        if (this._isValidConsumerTag(message)) {
             this._channel.reject(message, requeue);
         }
+    }
+
+    private _isValidConsumerTag(message: Message): boolean {
+        return !this._consumerTag || message.fields.consumerTag == this._consumerTag;
     }
 
     public sendToQueue(queue: string, content: Buffer, options?: Options.Publish) {
@@ -104,11 +109,17 @@ export class Channel {
     }
 
     private _onChannelClose() {
-        console.log("error")
+        this.dispatcher.channelCloseEvent.fireEvent({channel: this});
+        this._clear();
     }
 
     private _onChannelError(e: Error) {
-        console.log("error", e)
+        this.dispatcher.channelErrorEvent.fireEvent({channel: this, error: e});
+        this._clear();
+    }
+
+    private _clear() {
+        this._channel.removeAllListeners();
     }
 
 

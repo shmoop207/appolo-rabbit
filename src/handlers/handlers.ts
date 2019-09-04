@@ -21,15 +21,9 @@ export class Handlers {
     private _events = new EventDispatcher();
     private _onUnhandled: IHandlerFn;
 
-
-    constructor() {
-
-    }
-
-
     @initMethod()
     public initialize() {
-        this.dispatcher.onMessageEvent.on(this._handleMessage, this)
+        this.dispatcher.queueMessageEvent.on(this._handleMessage, this)
     }
 
     public onUnhandled(handler: IHandlerFn) {
@@ -79,21 +73,30 @@ export class Handlers {
         let hasHandler = this._events.hasListener(key);
 
         if (!hasHandler) {
-            let fn = this._onUnhandled || this.options.onUnhandled;
-
-            fn(message);
+            this._handleUnhandledMessage(message);
+            return;
         }
 
         this._events.fireEvent(key, message)
-
-
     }
+
+    private _handleUnhandledMessage(message: Message<any>) {
+        let fn = this._onUnhandled || this.options.onUnhandled;
+        try {
+            message.body = this._deserializeBody(message);
+            fn(message);
+
+        } catch (e) {
+            message.nack();
+        }
+    }
+
+
 
     private _onMessageHandler(message: Message<any>, handler: Handler) {
         try {
 
-            message.body = this.serializers.getSerializer(message.properties.contentType)
-                .deserialize(message.content, message.properties.contentEncoding);
+            message.body = this._deserializeBody(message);
 
             handler.handlerFn.apply(handler.options.context, [message]);
 
@@ -101,6 +104,11 @@ export class Handlers {
 
             handler.options.errorHandler.apply(handler.options.context, [e, message])
         }
+    }
+
+    private _deserializeBody(message: Message<any>) {
+        return this.serializers.getSerializer(message.properties.contentType)
+            .deserialize(message.content, message.properties.contentEncoding);
     }
 
 

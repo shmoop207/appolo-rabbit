@@ -1,4 +1,4 @@
-import {define, inject} from 'appolo-engine';
+import {define, inject, initMethod} from 'appolo-engine';
 import * as _ from "lodash";
 import {Promises} from "appolo-utils";
 import {Exchange} from "./exchanges/exchange";
@@ -9,25 +9,26 @@ import {Topology} from "./topology/topology";
 import {Handlers} from "./handlers/handlers";
 import {Requests} from "./requests/requests";
 import {Connection} from "./connection/connection";
+import {Dispatcher} from "./events/dispatcher";
 import {Duplex, PassThrough, Readable, Writable} from "stream";
 import {IHandlerFn, IHandlerOptions} from "./handlers/IHandlerOptions";
 import {IPublishOptions, IRequestOptions} from "./exchanges/IPublishOptions";
+import {EventDispatcher} from "appolo-event-dispatcher";
 
 @define()
-export class Rabbit {
+export class Rabbit extends EventDispatcher {
 
     @inject() private topology: Topology;
     @inject() private handlers: Handlers;
     @inject() private requests: Requests;
     @inject() private connection: Connection;
+    @inject() private dispatcher: Dispatcher;
 
-
-    constructor() {
-
-    }
-
-    public initialize() {
-
+    @initMethod()
+    private _initialize() {
+        this.dispatcher.connectionClosedEvent.on(() => this.fireEvent("closed"));
+        this.dispatcher.connectionFailedEvent.on(({error}) => this.fireEvent("failed", error));
+        this.dispatcher.connectionConnectedEvent.on(() => this.fireEvent("connected"));
     }
 
     public async connect(): Promise<void> {
@@ -35,6 +36,7 @@ export class Rabbit {
 
         await this.topology.createTopology();
     }
+
 
     public onUnhandled(handler: IHandlerFn) {
         this.handlers.onUnhandled(handler);
@@ -47,7 +49,7 @@ export class Rabbit {
         await exchange.publish(msg);
     }
 
-    public async request<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<Message<T>> {
+    public async request<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<T> {
 
         let exchange = this._getExchange(exchangeName);
 
@@ -113,6 +115,10 @@ export class Rabbit {
         let handler = this.handlers.addHandler(options, handlerFn, queueName);
 
         return handler;
+    }
+
+    public async close() {
+        await this.connection.close()
     }
 
 

@@ -11,7 +11,7 @@ let Handlers = class Handlers {
         this._events = new appolo_event_dispatcher_1.EventDispatcher();
     }
     initialize() {
-        this.dispatcher.onMessageEvent.on(this._handleMessage, this);
+        this.dispatcher.queueMessageEvent.on(this._handleMessage, this);
     }
     onUnhandled(handler) {
         this._onUnhandled = handler;
@@ -40,20 +40,33 @@ let Handlers = class Handlers {
         let key = `${message.queue}.${message.type}`;
         let hasHandler = this._events.hasListener(key);
         if (!hasHandler) {
-            let fn = this._onUnhandled || this.options.onUnhandled;
-            fn(message);
+            this._handleUnhandledMessage(message);
+            return;
         }
         this._events.fireEvent(key, message);
     }
+    _handleUnhandledMessage(message) {
+        let fn = this._onUnhandled || this.options.onUnhandled;
+        try {
+            message.body = this._deserializeBody(message);
+            fn(message);
+        }
+        catch (e) {
+            message.nack();
+        }
+    }
     _onMessageHandler(message, handler) {
         try {
-            message.body = this.serializers.getSerializer(message.properties.contentType)
-                .deserialize(message.content, message.properties.contentEncoding);
+            message.body = this._deserializeBody(message);
             handler.handlerFn.apply(handler.options.context, [message]);
         }
         catch (e) {
             handler.options.errorHandler.apply(handler.options.context, [e, message]);
         }
+    }
+    _deserializeBody(message) {
+        return this.serializers.getSerializer(message.properties.contentType)
+            .deserialize(message.content, message.properties.contentEncoding);
     }
 };
 tslib_1.__decorate([

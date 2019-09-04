@@ -44,7 +44,7 @@ let Queue = class Queue {
         return result;
     }
     _onMessage(message) {
-        this.dispatcher.onMessageEvent.fireEvent({ message, queue: this });
+        this.dispatcher.queueMessageEvent.fireEvent({ message, queue: this });
     }
     ack(msg) {
         this._channel.ack(msg);

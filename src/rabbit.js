@@ -3,10 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const appolo_engine_1 = require("appolo-engine");
 const appolo_utils_1 = require("appolo-utils");
-let Rabbit = class Rabbit {
-    constructor() {
-    }
-    initialize() {
+const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
+let Rabbit = class Rabbit extends appolo_event_dispatcher_1.EventDispatcher {
+    _initialize() {
+        this.dispatcher.connectionClosedEvent.on(() => this.fireEvent("closed"));
+        this.dispatcher.connectionFailedEvent.on(({ error }) => this.fireEvent("failed", error));
+        this.dispatcher.connectionConnectedEvent.on(() => this.fireEvent("connected"));
     }
     async connect() {
         await this.connection.createConnection();
@@ -63,6 +65,9 @@ let Rabbit = class Rabbit {
         let handler = this.handlers.addHandler(options, handlerFn, queueName);
         return handler;
     }
+    async close() {
+        await this.connection.close();
+    }
 };
 tslib_1.__decorate([
     appolo_engine_1.inject()
@@ -76,6 +81,12 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     appolo_engine_1.inject()
 ], Rabbit.prototype, "connection", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Rabbit.prototype, "dispatcher", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.initMethod()
+], Rabbit.prototype, "_initialize", null);
 Rabbit = tslib_1.__decorate([
     appolo_engine_1.define()
 ], Rabbit);

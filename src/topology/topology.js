@@ -38,7 +38,7 @@ let Topology = class Topology {
     }
     async _createRequestQueues() {
         await promises_1.Promises.map(this._options.requestQueues, opts => {
-            opts = Object.assign({}, queueDefaults_1.ReplyQueueDefaults, opts);
+            opts = Object.assign({}, queueDefaults_1.RequestQueueDefaults, opts);
             return this._createQueue(opts);
         });
     }
