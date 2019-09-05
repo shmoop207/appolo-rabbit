@@ -7,6 +7,7 @@ const appolo_engine_1 = require("appolo-engine");
 const stream_1 = require("stream");
 const requestError_1 = require("../errors/requestError");
 const IPublishOptions_1 = require("../exchanges/IPublishOptions");
+const requestDefaults_1 = require("./requestDefaults");
 let Requests = class Requests {
     constructor() {
         this._outgoingRequests = new Map();
@@ -45,12 +46,14 @@ let Requests = class Requests {
         }
         let correlationId = appolo_utils_1.Guid.guid();
         let dto = Object.assign({}, msg, { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false });
-        await exchange.publish(dto);
+        dto = Object.assign({}, requestDefaults_1.RequestDefaults, dto);
         let deferred = appolo_utils_1.Promises.defer();
         let timeout = null;
-        if (msg.replyTimeout) {
-            timeout = setTimeout(() => this._onTimeout(correlationId), msg.replyTimeout);
+        if (dto.replyTimeout) {
+            dto.expiration = dto.replyTimeout;
+            timeout = setTimeout(() => this._onTimeout(correlationId), dto.replyTimeout);
         }
+        await exchange.publish(dto);
         this._outgoingRequests.set(correlationId, { timeout, deferred });
         return deferred.promise;
     }

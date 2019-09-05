@@ -99,7 +99,9 @@ export class Channel {
 
         if (options.confirm !== undefined ? options.confirm : this._options.confirm) {
             return new Promise<void>((resolve, reject) => {
-                this._channel.publish(exchange, routingKey, content, options, (err, ok) => err ? reject(err) : resolve())
+                this._channel.publish(exchange, routingKey, content, options, (err, ok) =>{
+                    err ? reject(err) : resolve()
+                })
             })
         }
 

@@ -32,7 +32,7 @@ describe("bus module Spec", function () {
         await rabbit.close()
     });
 
-    it("should connect", async () => {
+    it.only("should connect", async () => {
 
         rabbit.on("closed", () => console.log("closed"));
         rabbit.on("failed", () => console.log("failed"));
@@ -42,7 +42,6 @@ describe("bus module Spec", function () {
 
         rabbit.handle("aa.bb.cc", async (msg: Message<any>) => {
 
-            //await Promises.delay(100000)
 
             msg.ack();
         });
@@ -52,7 +51,20 @@ describe("bus module Spec", function () {
         await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
         await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
         await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
-        await await Promises.delay(30000);
+
+
+        rabbit.handle("request.aaaaa.bbbb", async (msg: Message<{ counter: number }>) => {
+            await  Promises.delay(30000);
+            msg.replyResolve({counter: msg.body.counter + 2});
+        })
+
+        let result = await rabbit.request<{ counter: number }>("test", {
+            routingKey: "request.aaaaa.bbbb",
+            body: {counter: 1}
+        });
+
+
+        await  Promises.delay(30000);
 
         await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
         await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});

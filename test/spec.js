@@ -28,20 +28,27 @@ describe("bus module Spec", function () {
     afterEach(async () => {
         await rabbit.close();
     });
-    it("should connect", async () => {
+    it.only("should connect", async () => {
         rabbit.on("closed", () => console.log("closed"));
         rabbit.on("failed", () => console.log("failed"));
         rabbit.on("connected", () => console.log("connected"));
         await rabbit.connect();
         rabbit.handle("aa.bb.cc", async (msg) => {
-            //await Promises.delay(100000)
             msg.ack();
         });
         await rabbit.subscribe();
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
-        await await appolo_utils_1.Promises.delay(30000);
+        rabbit.handle("request.aaaaa.bbbb", async (msg) => {
+            await appolo_utils_1.Promises.delay(30000);
+            msg.replyResolve({ counter: msg.body.counter + 2 });
+        });
+        let result = await rabbit.request("test", {
+            routingKey: "request.aaaaa.bbbb",
+            body: { counter: 1 }
+        });
+        await appolo_utils_1.Promises.delay(30000);
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
     });

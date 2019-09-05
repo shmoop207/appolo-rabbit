@@ -10,6 +10,7 @@ import {Duplex, PassThrough, Readable} from 'stream';
 import {RequestError} from "../errors/requestError";
 import {IRequestOptions, StreamStatus} from "../exchanges/IPublishOptions";
 import {IRequest} from "./IRequest";
+import {RequestDefaults} from "./requestDefaults";
 
 @define()
 @singleton()
@@ -88,14 +89,17 @@ export class Requests {
             persistent: false
         };
 
-        await exchange.publish(dto);
+        dto = Object.assign({}, RequestDefaults, dto);
 
         let deferred = Promises.defer<T>();
         let timeout: Timeout = null;
 
-        if (msg.replyTimeout) {
-            timeout = setTimeout(() => this._onTimeout(correlationId), msg.replyTimeout)
+        if (dto.replyTimeout) {
+            dto.expiration = dto.replyTimeout;
+            timeout = setTimeout(() => this._onTimeout(correlationId), dto.replyTimeout)
         }
+
+        await exchange.publish(dto);
 
         this._outgoingRequests.set(correlationId, {timeout, deferred});
 

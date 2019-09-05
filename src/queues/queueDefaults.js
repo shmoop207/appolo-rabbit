@@ -9,7 +9,7 @@ exports.QueueDefaults = {
 exports.RequestQueueDefaults = {
     subscribe: false,
     durable: false,
-    autoDelete: true,
+    autoDelete: false,
     noAck: false,
     messageTtl: 1000 * 60 * 10
 };
