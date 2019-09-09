@@ -30,7 +30,7 @@ let Requests = class Requests {
             throw new Error(`reply queue not defined`);
         }
         let correlationId = appolo_utils_1.Guid.guid();
-        let headers = { "x-reply-stream": true };
+        let headers = Object.assign({}, msg.headers, { "x-reply-stream": true });
         let dto = Object.assign({}, msg, { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, headers });
         await exchange.publish(dto);
         let timeout = null;
@@ -45,7 +45,8 @@ let Requests = class Requests {
             throw new Error(`reply queue not defined`);
         }
         let correlationId = appolo_utils_1.Guid.guid();
-        let dto = Object.assign({}, msg, { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false });
+        let headers = Object.assign({}, msg.headers, { "x-reply": true });
+        let dto = Object.assign({}, msg, { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, headers });
         dto = Object.assign({}, requestDefaults_1.RequestDefaults, dto);
         let deferred = appolo_utils_1.Promises.defer();
         let timeout = null;
@@ -113,11 +114,18 @@ let Requests = class Requests {
         }
     }
     async _errorHandler(error, msg) {
-        if (msg.stream) {
-            msg.stream.emit("error", error.toString());
+        let request = this._outgoingRequests.get(msg.properties.correlationId);
+        if (!request) {
+            return;
         }
-        else {
-            msg.replyReject(new requestError_1.RequestError(error.toString()));
+        this._finishReply(msg.properties.correlationId, request.timeout);
+        if (msg.properties.headers["x-reply"]) {
+            request.deferred.reject(error);
+            return;
+        }
+        if (msg.properties.headers["x-reply-stream"]) {
+            request.stream.emit("error", error.toString());
+            return;
         }
     }
 };

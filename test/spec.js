@@ -28,29 +28,17 @@ describe("bus module Spec", function () {
     afterEach(async () => {
         await rabbit.close();
     });
-    it.only("should connect", async () => {
-        rabbit.on("closed", () => console.log("closed"));
-        rabbit.on("failed", () => console.log("failed"));
-        rabbit.on("connected", () => console.log("connected"));
+    it("should connect", async () => {
         await rabbit.connect();
+        let worked = false;
         rabbit.handle("aa.bb.cc", async (msg) => {
+            worked = true;
             msg.ack();
         });
         await rabbit.subscribe();
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
-        await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
-        await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
-        rabbit.handle("request.aaaaa.bbbb", async (msg) => {
-            await appolo_utils_1.Promises.delay(30000);
-            msg.replyResolve({ counter: msg.body.counter + 2 });
-        });
-        let result = await rabbit.request("test", {
-            routingKey: "request.aaaaa.bbbb",
-            body: { counter: 1 }
-        });
-        await appolo_utils_1.Promises.delay(30000);
-        await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
-        await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
+        await appolo_utils_1.Promises.delay(3000);
+        worked.should.be.ok;
     });
     it("should replay", async () => {
         rabbit.handle("request.aaaaa.bbbb", (msg) => {
@@ -93,23 +81,5 @@ describe("bus module Spec", function () {
         }
         sum.should.be.eq(5);
     });
-    // it("should load bus", async () => {
-    //
-    //
-    //     let publisher = app.injector.get<MessagePublisher>(MessagePublisher);
-    //     let handler = app.injector.get<MessageHandler>(MessageHandler);
-    //
-    //     let spy = sinon.spy(handler, "handle");
-    //
-    //     await publisher.publishMethod("aa");
-    //
-    //     await delay(1000);
-    //
-    //     spy.should.have.been.calledOnce;
-    //
-    //     spy.getCall(0).args[0].body.test.should.be.eq("aa");
-    //
-    //
-    // });
 });
 //# sourceMappingURL=spec.js.map

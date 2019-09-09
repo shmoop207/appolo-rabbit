@@ -49,7 +49,7 @@ export class Requests {
 
         let correlationId = Guid.guid();
 
-        let headers = {"x-reply-stream": true};
+        let headers = {...msg.headers, "x-reply-stream": true};
 
         let dto: IRequestOptions = {
             ...msg,
@@ -80,13 +80,16 @@ export class Requests {
         }
 
         let correlationId = Guid.guid();
+        let headers = {...msg.headers, "x-reply": true};
+
 
         let dto: IRequestOptions = {
             ...msg,
             correlationId,
             replyTo: this.topology.replyQueue.name,
             confirm: false,
-            persistent: false
+            persistent: false,
+            headers
         };
 
         dto = Object.assign({}, RequestDefaults, dto);
@@ -177,10 +180,22 @@ export class Requests {
     }
 
     private async _errorHandler(error: Error, msg: Message<any>) {
-        if (msg.stream) {
-            msg.stream.emit("error", error.toString());
-        } else {
-            msg.replyReject(new RequestError(error.toString()))
+        let request = this._outgoingRequests.get(msg.properties.correlationId);
+
+        if (!request) {
+            return;
+        }
+
+        this._finishReply(msg.properties.correlationId, request.timeout);
+
+        if (msg.properties.headers["x-reply"]) {
+            request.deferred.reject(error);
+            return;
+        }
+
+        if (msg.properties.headers["x-reply-stream"]) {
+            request.stream.emit("error", error.toString());
+            return;
         }
     }
 }

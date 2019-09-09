@@ -61,6 +61,14 @@ let Handlers = class Handlers {
             handler.handlerFn.apply(handler.options.context, [message]);
         }
         catch (e) {
+            if (message.properties.headers["x-reply"]) {
+                message.replyReject(e);
+                return;
+            }
+            if (message.properties.headers["x-reply-stream"]) {
+                message.stream.emit("error", e.toString());
+                return;
+            }
             handler.options.errorHandler.apply(handler.options.context, [e, message]);
         }
     }

@@ -22,7 +22,7 @@ export class Message<T> implements IMessage<T> {
     }
 
     private _onStreamWrite(chunk) {
-        this._reply(chunk, {headers: {"x-reply-stream-status": StreamStatus.Chunk}})
+        this._reply(chunk, {headers: {"x-reply-stream-status": StreamStatus.Chunk}}, false);
     }
 
     private _onStreamFinish() {
@@ -78,13 +78,16 @@ export class Message<T> implements IMessage<T> {
         this._queue.reject(this._msg, requeue)
     }
 
-    private _reply(data?: any, opts?: Partial<IPublishOptions>): void {
+    private _reply(data: any, opts: Partial<IPublishOptions>, ack: boolean = true): void {
 
         if (this._isAcked) {
             return;
         }
 
-        this.ack();
+        if (ack) {
+            this.ack();
+        }
+
 
         this._queue.reply(this, data, opts)
     }
@@ -93,7 +96,7 @@ export class Message<T> implements IMessage<T> {
         return this._reply({
             success: true,
             data: data
-        },)
+        }, {})
     };
 
     public replyReject(e: RequestError<T>) {
@@ -101,7 +104,7 @@ export class Message<T> implements IMessage<T> {
             success: false,
             message: e && e.message,
             data: e && e.data
-        })
+        }, {})
     }
 
     public get type(): string {
@@ -126,6 +129,4 @@ export class Message<T> implements IMessage<T> {
 }
 
 
-//TODO handle disconnect
-//TODO handle close
 //TODO publish timeout

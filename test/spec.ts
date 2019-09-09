@@ -32,43 +32,24 @@ describe("bus module Spec", function () {
         await rabbit.close()
     });
 
-    it.only("should connect", async () => {
-
-        rabbit.on("closed", () => console.log("closed"));
-        rabbit.on("failed", () => console.log("failed"));
-        rabbit.on("connected", () => console.log("connected"));
+    it("should connect", async () => {
 
         await rabbit.connect();
 
+        let worked = false;
+
         rabbit.handle("aa.bb.cc", async (msg: Message<any>) => {
-
-
+            worked = true;
             msg.ack();
         });
 
         await rabbit.subscribe();
 
         await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
-        await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
-        await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
 
+        await Promises.delay(3000);
 
-        rabbit.handle("request.aaaaa.bbbb", async (msg: Message<{ counter: number }>) => {
-            await  Promises.delay(30000);
-            msg.replyResolve({counter: msg.body.counter + 2});
-        })
-
-        let result = await rabbit.request<{ counter: number }>("test", {
-            routingKey: "request.aaaaa.bbbb",
-            body: {counter: 1}
-        });
-
-
-        await  Promises.delay(30000);
-
-        await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
-        await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
-
+        worked.should.be.ok;
 
     });
 
@@ -89,7 +70,7 @@ describe("bus module Spec", function () {
 
         result.counter.should.be.eq(3)
 
-    })
+    });
 
     it("should replay stream", async () => {
 
@@ -97,7 +78,7 @@ describe("bus module Spec", function () {
             msg.stream.write(Buffer.from(JSON.stringify({counter: msg.body.counter + 1})));
             msg.stream.write(Buffer.from(JSON.stringify({counter: msg.body.counter + 2})));
             msg.stream.end();
-        })
+        });
 
         await rabbit.connect();
 
@@ -118,24 +99,6 @@ describe("bus module Spec", function () {
         sum.should.be.eq(5);
     })
 
-    // it("should load bus", async () => {
-    //
-    //
-    //     let publisher = app.injector.get<MessagePublisher>(MessagePublisher);
-    //     let handler = app.injector.get<MessageHandler>(MessageHandler);
-    //
-    //     let spy = sinon.spy(handler, "handle");
-    //
-    //     await publisher.publishMethod("aa");
-    //
-    //     await delay(1000);
-    //
-    //     spy.should.have.been.calledOnce;
-    //
-    //     spy.getCall(0).args[0].body.test.should.be.eq("aa");
-    //
-    //
-    // });
 
 
 });

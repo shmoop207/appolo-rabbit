@@ -15,7 +15,7 @@ class Message {
         }
     }
     _onStreamWrite(chunk) {
-        this._reply(chunk, { headers: { "x-reply-stream-status": IPublishOptions_1.StreamStatus.Chunk } });
+        this._reply(chunk, { headers: { "x-reply-stream-status": IPublishOptions_1.StreamStatus.Chunk } }, false);
     }
     _onStreamFinish() {
         this._reply("", { headers: { "x-reply-stream-status": IPublishOptions_1.StreamStatus.Finish } });
@@ -56,18 +56,20 @@ class Message {
         this._isAcked = true;
         this._queue.reject(this._msg, requeue);
     }
-    _reply(data, opts) {
+    _reply(data, opts, ack = true) {
         if (this._isAcked) {
             return;
         }
-        this.ack();
+        if (ack) {
+            this.ack();
+        }
         this._queue.reply(this, data, opts);
     }
     replyResolve(data) {
         return this._reply({
             success: true,
             data: data
-        });
+        }, {});
     }
     ;
     replyReject(e) {
@@ -75,7 +77,7 @@ class Message {
             success: false,
             message: e && e.message,
             data: e && e.data
-        });
+        }, {});
     }
     get type() {
         return this._msg.properties.type || this._msg.fields.routingKey;
@@ -94,7 +96,5 @@ class Message {
     }
 }
 exports.Message = Message;
-//TODO handle disconnect
-//TODO handle close
 //TODO publish timeout
 //# sourceMappingURL=message.js.map
