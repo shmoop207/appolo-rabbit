@@ -53,6 +53,29 @@ describe("bus module Spec", function () {
 
     });
 
+
+    it("should reconnect connect", async () => {
+
+        await rabbit.connect();
+
+        let worked = false;
+
+        rabbit.handle("aa.bb.cc", async (msg: Message<any>) => {
+            worked = true;
+            msg.ack();
+        });
+
+        await rabbit.subscribe();
+        await rabbit.reconnect();
+
+        await rabbit.publish("test", {routingKey: "aa.bb.cc", body: {working: true}});
+
+        await Promises.delay(3000);
+
+        worked.should.be.ok;
+
+    });
+
     it("should replay", async () => {
 
         rabbit.handle("request.aaaaa.bbbb", (msg: Message<{ counter: number }>) => {
@@ -73,6 +96,7 @@ describe("bus module Spec", function () {
     });
 
     it("should replay stream", async () => {
+
 
         rabbit.handle("request.aaaaa.ccc", (msg: Message<{ counter: number }>) => {
             msg.stream.write(Buffer.from(JSON.stringify({counter: msg.body.counter + 1})));

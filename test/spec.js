@@ -40,6 +40,19 @@ describe("bus module Spec", function () {
         await appolo_utils_1.Promises.delay(3000);
         worked.should.be.ok;
     });
+    it("should reconnect connect", async () => {
+        await rabbit.connect();
+        let worked = false;
+        rabbit.handle("aa.bb.cc", async (msg) => {
+            worked = true;
+            msg.ack();
+        });
+        await rabbit.subscribe();
+        await rabbit.reconnect();
+        await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
+        await appolo_utils_1.Promises.delay(3000);
+        worked.should.be.ok;
+    });
     it("should replay", async () => {
         rabbit.handle("request.aaaaa.bbbb", (msg) => {
             msg.replyResolve({ counter: msg.body.counter + 2 });

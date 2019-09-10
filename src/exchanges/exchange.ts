@@ -8,12 +8,14 @@ import {Channel} from "../channel/channel";
 import {IExchangeOptions} from "./IExchangeOptions";
 import {IChannelOptions} from "../channel/IChannelOptions";
 import {IPublishOptions} from "./IPublishOptions";
+import {Connection} from "../connection/connection";
 
 @define()
 export class Exchange {
 
     @injectFactoryMethod(Channel) private createChanel: (opts: IChannelOptions) => Channel;
     @inject() private serializers: Serializers;
+    @inject() private connection: Connection;
 
 
     constructor(private _options: IExchangeOptions) {
@@ -31,7 +33,11 @@ export class Exchange {
         await this._channel.assertExchange(this._options)
     }
 
-    public async publish(msg: IPublishOptions) {
+    public async publish(msg: IPublishOptions): Promise<void> {
+
+        if (!this.connection.isConnected()) {
+            throw new Error("failed to publish message not connected to server")
+        }
 
         let opts: Options.Publish = Object.assign({
             headers: {},

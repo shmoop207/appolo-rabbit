@@ -21,6 +21,9 @@ let Connection = class Connection {
         this._isConnected = true;
         this.dispatcher.connectionConnectedEvent.fireEvent({ connection: this });
     }
+    isConnected() {
+        return this._isConnected;
+    }
     _parseUri(uri) {
         let amqp = url.parse(uri);
         return {

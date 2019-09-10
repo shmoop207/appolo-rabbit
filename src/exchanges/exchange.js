@@ -15,6 +15,9 @@ let Exchange = class Exchange {
         await this._channel.assertExchange(this._options);
     }
     async publish(msg) {
+        if (!this.connection.isConnected()) {
+            throw new Error("failed to publish message not connected to server");
+        }
         let opts = Object.assign({
             headers: {},
             timestamp: Date.now(),
@@ -36,6 +39,9 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     appolo_engine_1.inject()
 ], Exchange.prototype, "serializers", void 0);
+tslib_1.__decorate([
+    appolo_engine_1.inject()
+], Exchange.prototype, "connection", void 0);
 Exchange = tslib_1.__decorate([
     appolo_engine_1.define()
 ], Exchange);

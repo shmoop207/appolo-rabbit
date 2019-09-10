@@ -49,6 +49,10 @@ export class Connection {
 
     }
 
+    public isConnected(): boolean {
+        return this._isConnected;
+    }
+
     private _parseUri(uri: string) {
         let amqp = url.parse(uri);
         return {

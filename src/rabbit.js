@@ -68,6 +68,13 @@ let Rabbit = class Rabbit extends appolo_event_dispatcher_1.EventDispatcher {
     async close() {
         await this.connection.close();
     }
+    async reconnect() {
+        if (this.connection.isConnected()) {
+            await this.close();
+        }
+        await this.connect();
+        await this.subscribe();
+    }
 };
 tslib_1.__decorate([
     appolo_engine_1.inject()

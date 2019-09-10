@@ -121,5 +121,14 @@ export class Rabbit extends EventDispatcher {
         await this.connection.close()
     }
 
+    public async reconnect() {
+        if (this.connection.isConnected()) {
+            await this.close();
+        }
+
+        await this.connect();
+        await this.subscribe();
+    }
+
 
 }
