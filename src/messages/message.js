@@ -96,5 +96,4 @@ class Message {
     }
 }
 exports.Message = Message;
-//TODO publish timeout
 //# sourceMappingURL=message.js.map

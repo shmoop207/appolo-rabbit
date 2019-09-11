@@ -127,6 +127,3 @@ export class Message<T> implements IMessage<T> {
         return this._stream;
     }
 }
-
-
-//TODO publish timeout
