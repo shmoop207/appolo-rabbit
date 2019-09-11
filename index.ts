@@ -3,7 +3,7 @@ import {Message} from "./src/messages/message"
 import {IOptions} from "./src/common/IOptions";
 import {App, createApp} from 'appolo-engine';
 
-export {Rabbit, Message}
+export {Rabbit, Message,IOptions}
 
 export async function createRabbit(options: IOptions) {
     let app = createApp({});
