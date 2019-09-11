@@ -11,6 +11,7 @@ import {RequestError} from "../errors/requestError";
 import {IRequestOptions, StreamStatus} from "../exchanges/IPublishOptions";
 import {IRequest} from "./IRequest";
 import {RequestDefaults} from "./requestDefaults";
+import {IOptions} from "../common/IOptions";
 
 @define()
 @singleton()
@@ -56,16 +57,19 @@ export class Requests {
             correlationId,
             replyTo: this.topology.replyQueue.name,
             confirm: false, persistent: false,
+            replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout,
             headers
         };
 
-        await exchange.publish(dto);
 
         let timeout: Timeout = null;
 
-        if (msg.replyTimeout) {
-            timeout = setTimeout(() => this._onTimeout(correlationId), msg.replyTimeout)
+        if (dto.replyTimeout) {
+            timeout = setTimeout(() => this._onTimeout(correlationId), dto.replyTimeout)
         }
+
+        await exchange.publish(dto);
+
 
         this._outgoingRequests.set(correlationId, {timeout, stream});
 
@@ -89,10 +93,9 @@ export class Requests {
             replyTo: this.topology.replyQueue.name,
             confirm: false,
             persistent: false,
+            replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout,
             headers
         };
-
-        dto = Object.assign({}, RequestDefaults, dto);
 
         let deferred = Promises.defer<T>();
         let timeout: Timeout = null;

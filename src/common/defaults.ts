@@ -7,6 +7,7 @@ export const Defaults = <Partial<IOptions>>{
     queues: [],
     bindings: [],
     requestQueues: [],
+    replyTimeout: 10 * 60 * 1000,
     onUnhandled: (msg: Message<any>) => msg.nack()
 }
 

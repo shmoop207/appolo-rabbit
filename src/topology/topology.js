@@ -64,6 +64,9 @@ let Topology = class Topology {
         }
         return queue.bind(item.exchange, item.keys);
     }
+    get options() {
+        return this._options;
+    }
     get exchanges() {
         return this._exchanges;
     }

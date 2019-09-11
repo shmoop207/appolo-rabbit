@@ -107,6 +107,10 @@ export class Topology {
         return queue.bind(item.exchange, item.keys)
     }
 
+    public get options() {
+        return this._options;
+    }
+
     public get exchanges() {
         return this._exchanges;
     }
