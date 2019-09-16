@@ -2,7 +2,7 @@ import {Rabbit} from "./src/rabbit"
 import {Message} from "./src/messages/message"
 import {IMessage} from "./src/messages/IMessage"
 import {IOptions} from "./src/common/IOptions";
-import {IQueueOptions} from "./src/queues/IQueueOptions";
+import {IQueueOptions, IBindingOptions} from "./src/queues/IQueueOptions";
 import {IExchangeOptions} from "./src/exchanges/IExchangeOptions";
 import {IConnectionOptions} from "./src/connection/IConnectionOptions";
 import {Handler} from "./src/handlers/handler";
@@ -19,7 +19,7 @@ export {
     Handler,
     IRequestOptions,
     IPublishOptions,
-    IMessage
+    IMessage, IBindingOptions
 }
 
 export async function createRabbit(options: IOptions) {
