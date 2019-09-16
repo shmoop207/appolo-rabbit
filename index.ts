@@ -23,7 +23,7 @@ export {
 }
 
 export async function createRabbit(options: IOptions) {
-    let app = createApp({});
+    let app = createApp({root:__dirname});
 
     app.injector.addObject("options", options);
 

@@ -8,7 +8,7 @@ const handler_1 = require("./src/handlers/handler");
 exports.Handler = handler_1.Handler;
 const appolo_engine_1 = require("appolo-engine");
 async function createRabbit(options) {
-    let app = appolo_engine_1.createApp({});
+    let app = appolo_engine_1.createApp({ root: __dirname });
     app.injector.addObject("options", options);
     await app.launch();
     let rabbit = app.injector.get(rabbit_1.Rabbit, [options]);
