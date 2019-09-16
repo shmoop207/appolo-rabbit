@@ -12,7 +12,7 @@ describe("bus module Spec", function () {
     beforeEach(async () => {
         rabbit = await index_1.createRabbit({
             connection: {
-                uri: "amqp://fthehtyp:X1-S6Lrb0Q8SRmpzp5qtocxZBIy6Pmbp@orangutan.rmq.cloudamqp.com/fthehtyp"
+                uri: process.env.RABBIT
             },
             exchanges: [{ persistent: true, name: "test", type: "topic", autoDelete: true, durable: true }],
             queues: [{ name: "test" }],
