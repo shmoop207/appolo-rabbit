@@ -11,7 +11,7 @@ export interface IOptions {
     replyQueue?: IQueueOptions
     bindings?: IBindingOptions[]
     onUnhandled?: IHandlerFn
-    replyTimeout: number
+    replyTimeout?: number
 }
 
 

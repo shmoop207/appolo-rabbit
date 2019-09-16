@@ -14,7 +14,7 @@ import {IExchangeOptions} from "../exchanges/IExchangeOptions";
 import {ExchangeDefaults} from "../exchanges/exchangeDefaults";
 import {IBindingOptions, IQueueOptions} from "../queues/IQueueOptions";
 import {QueueDefaults, ReplyQueueDefaults, RequestQueueDefaults} from "../queues/queueDefaults";
-import {IHandlerFn} from "../handlers/IHandlerOptions";
+import {Guid} from "appolo-utils";
 
 @define()
 @singleton()
@@ -81,7 +81,9 @@ export class Topology {
 
         let opts = Object.assign({}, ReplyQueueDefaults, this._options.replyQueue);
 
-        await this._createQueue(opts)
+        opts.name += `-${Guid.guid()}`;
+
+        await this._createQueue(opts);
 
     }
 

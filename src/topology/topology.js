@@ -8,6 +8,7 @@ const queue_1 = require("../queues/queue");
 const promises_1 = require("appolo-utils/lib/promises");
 const exchangeDefaults_1 = require("../exchanges/exchangeDefaults");
 const queueDefaults_1 = require("../queues/queueDefaults");
+const appolo_utils_1 = require("appolo-utils");
 let Topology = class Topology {
     constructor() {
         this._exchanges = new Map();
@@ -47,6 +48,7 @@ let Topology = class Topology {
             return;
         }
         let opts = Object.assign({}, queueDefaults_1.ReplyQueueDefaults, this._options.replyQueue);
+        opts.name += `-${appolo_utils_1.Guid.guid()}`;
         await this._createQueue(opts);
     }
     _createQueue(opts) {
