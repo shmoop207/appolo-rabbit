@@ -4,9 +4,10 @@ import {IOptions} from "./src/common/IOptions";
 import {IQueueOptions} from "./src/queues/IQueueOptions";
 import {IExchangeOptions} from "./src/exchanges/IExchangeOptions";
 import {IConnectionOptions} from "./src/connection/IConnectionOptions";
+import {Handler} from "./src/handlers/handler";
 import {App, createApp} from 'appolo-engine';
 
-export {Rabbit, Message, IOptions, IQueueOptions, IExchangeOptions, IConnectionOptions}
+export {Rabbit, Message, IOptions, IQueueOptions, IExchangeOptions, IConnectionOptions, Handler}
 
 export async function createRabbit(options: IOptions) {
     let app = createApp({});
