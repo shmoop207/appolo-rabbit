@@ -1,5 +1,6 @@
 import {RequestError} from "../errors/requestError";
 import {MessagePropertyHeaders} from "amqplib";
+import {PassThrough} from "stream";
 
 export interface IMessage<T> {
     fields: MessageFields,
@@ -18,7 +19,11 @@ export interface IMessage<T> {
 
     replyResolve(data?: any)
 
-    replyReject(e: RequestError<T>)
+    replyReject(e: RequestError<T>);
+
+    stream: PassThrough
+    queue: string
+    content: Buffer
 
 }
 

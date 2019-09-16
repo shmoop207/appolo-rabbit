@@ -49,7 +49,7 @@ export class Rabbit extends EventDispatcher {
         await exchange.publish(msg);
     }
 
-    public async request<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<T> {
+    public  request<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<T> {
 
         let exchange = this._getExchange(exchangeName);
 

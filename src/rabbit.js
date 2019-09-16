@@ -21,7 +21,7 @@ let Rabbit = class Rabbit extends appolo_event_dispatcher_1.EventDispatcher {
         let exchange = this._getExchange(exchangeName);
         await exchange.publish(msg);
     }
-    async request(exchangeName, msg) {
+    request(exchangeName, msg) {
         let exchange = this._getExchange(exchangeName);
         return this.requests.request(exchange, msg);
     }

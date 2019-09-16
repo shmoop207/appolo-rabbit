@@ -119,7 +119,7 @@ export class Message<T> implements IMessage<T> {
         return this._body;
     }
 
-    public set body(value) {
+    public set body(value:T) {
         this._body = value;
     }
 
