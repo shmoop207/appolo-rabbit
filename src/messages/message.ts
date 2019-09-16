@@ -1,8 +1,8 @@
-import {ConsumeMessage, Channel} from "amqplib";
+import {ConsumeMessage, Channel, ConsumeMessageFields} from "amqplib";
 import {Queue} from "../queues/queue";
 import {PassThrough} from "stream";
 import {RequestError} from "../errors/requestError";
-import {IMessage} from "./IMessage";
+import {IMessage, MessageFields, MessageProperties} from "./IMessage";
 import {IPublishOptions, StreamStatus} from "../exchanges/IPublishOptions";
 
 export class Message<T> implements IMessage<T> {
@@ -34,11 +34,11 @@ export class Message<T> implements IMessage<T> {
 
     }
 
-    public get fields() {
+    public get fields(): MessageFields {
         return this._msg.fields;
     }
 
-    public get properties() {
+    public get properties():MessageProperties {
         return this._msg.properties;
     }
 

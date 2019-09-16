@@ -1,22 +1,9 @@
 import {RequestError} from "../errors/requestError";
+import {MessagePropertyHeaders} from "amqplib";
 
 export interface IMessage<T> {
-    fields: {
-        deliveryTag: number
-        redelivered: boolean,
-        exchange: string
-        routingKey: string
-    },
-    properties: {
-        contentType: string,
-        contentEncoding: string,
-        headers: any,
-        correlationId: string,
-        replyTo: string,
-        messageId: string,
-        type: string,
-        appId: string
-    },
+    fields: MessageFields,
+    properties: MessageProperties,
     body: T,
     sent?: boolean
     type: string
@@ -33,4 +20,28 @@ export interface IMessage<T> {
 
     replyReject(e: RequestError<T>)
 
+}
+
+export interface MessageFields {
+    deliveryTag: number;
+    redelivered: boolean;
+    exchange: string;
+    routingKey: string;
+}
+
+export interface MessageProperties {
+    contentType: any | undefined;
+    contentEncoding: any | undefined;
+    headers: MessagePropertyHeaders;
+    deliveryMode: any | undefined;
+    priority: any | undefined;
+    correlationId: any | undefined;
+    replyTo: any | undefined;
+    expiration: any | undefined;
+    messageId: any | undefined;
+    timestamp: any | undefined;
+    type: any | undefined;
+    userId: any | undefined;
+    appId: any | undefined;
+    clusterId: any | undefined;
 }
