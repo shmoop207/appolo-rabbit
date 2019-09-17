@@ -1,5 +1,5 @@
 export interface IPublishOptions {
-    expiration?: string | number;
+    expiration?:  number;
     userId?: string;
     CC?: string | string[];
 
