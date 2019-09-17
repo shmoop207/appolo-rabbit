@@ -49,12 +49,13 @@ let Topology = class Topology {
         }
         let opts = Object.assign({}, queueDefaults_1.ReplyQueueDefaults, this._options.replyQueue);
         opts.name += `-${appolo_utils_1.Guid.guid()}`;
-        await this._createQueue(opts);
+        this._replayQueue = await this._createQueue(opts);
     }
-    _createQueue(opts) {
+    async _createQueue(opts) {
         let queue = this.createQueue(opts);
         this._queues.set(opts.name, queue);
-        return queue.connect();
+        await queue.connect();
+        return queue;
     }
     _bindKeys() {
         return promises_1.Promises.map(this._options.bindings, item => this._bindKey(item));
@@ -76,7 +77,7 @@ let Topology = class Topology {
         return this._queues;
     }
     get replyQueue() {
-        return this._options.replyQueue;
+        return this._replayQueue;
     }
     get hasReplyQueue() {
         return !!this._options.replyQueue;

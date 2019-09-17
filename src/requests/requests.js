@@ -15,7 +15,10 @@ let Requests = class Requests {
         if (!this.topology.hasReplyQueue) {
             return;
         }
-        this.handlers.addHandler({
+        if (this._handler) {
+            this._handler.remove();
+        }
+        this._handler = this.handlers.addHandler({
             type: "#",
             handler: this._onReply,
             context: this,
@@ -133,9 +136,6 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     appolo_engine_1.inject()
 ], Requests.prototype, "handlers", void 0);
-tslib_1.__decorate([
-    appolo_engine_1.initMethod()
-], Requests.prototype, "initialize", null);
 Requests = tslib_1.__decorate([
     appolo_engine_1.define(),
     appolo_engine_1.singleton()

@@ -13,6 +13,7 @@ let Rabbit = class Rabbit extends appolo_event_dispatcher_1.EventDispatcher {
     async connect() {
         await this.connection.createConnection();
         await this.topology.createTopology();
+        this.requests.initialize();
     }
     onUnhandled(handler) {
         this.handlers.onUnhandled(handler);

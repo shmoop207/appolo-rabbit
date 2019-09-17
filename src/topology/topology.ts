@@ -22,6 +22,7 @@ export class Topology {
 
     private _exchanges = new Map<string, Exchange>();
     private _queues = new Map<string, Queue>();
+    private _replayQueue: Queue;
 
     @inject("options") private _options: IOptions;
     @injectFactoryMethod(Exchange) private createExchange: (opts: IExchangeOptions) => Exchange;
@@ -83,16 +84,18 @@ export class Topology {
 
         opts.name += `-${Guid.guid()}`;
 
-        await this._createQueue(opts);
+        this._replayQueue = await this._createQueue(opts);
 
     }
 
-    private _createQueue(opts: IQueueOptions) {
+    private async _createQueue(opts: IQueueOptions): Promise<Queue> {
         let queue = this.createQueue(opts);
 
         this._queues.set(opts.name, queue);
 
-        return queue.connect();
+        await queue.connect();
+
+        return queue;
     }
 
     private _bindKeys() {
@@ -122,8 +125,8 @@ export class Topology {
     }
 
 
-    public get replyQueue() {
-        return this._options.replyQueue;
+    public get replyQueue(): Queue {
+        return this._replayQueue;
     }
 
     public get hasReplyQueue(): boolean {

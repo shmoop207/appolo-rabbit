@@ -35,6 +35,8 @@ export class Rabbit extends EventDispatcher {
         await this.connection.createConnection();
 
         await this.topology.createTopology();
+
+        this.requests.initialize();
     }
 
 

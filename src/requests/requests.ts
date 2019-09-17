@@ -2,6 +2,7 @@ import {Exchange} from "../exchanges/exchange";
 import {Topology} from "../topology/topology";
 import {Message} from "../messages/message";
 import {Handlers} from "../handlers/handlers";
+import {Handler} from "../handlers/handler";
 import {Promises, Deferred, Guid} from "appolo-utils";
 import * as _ from "lodash";
 import Timeout = NodeJS.Timeout;
@@ -21,20 +22,27 @@ export class Requests {
     @inject() private topology: Topology;
     @inject() private handlers: Handlers;
 
-    @initMethod()
+    private _handler: Handler;
+
     public initialize() {
 
         if (!this.topology.hasReplyQueue) {
             return
         }
 
-        this.handlers.addHandler({
+        if (this._handler) {
+            this._handler.remove();
+        }
+
+        this._handler = this.handlers.addHandler({
             type: "#",
             handler: this._onReply,
             context: this,
             queue: this.topology.replyQueue.name,
             errorHandler: this._errorHandler.bind(this)
         })
+
+
     }
 
 
