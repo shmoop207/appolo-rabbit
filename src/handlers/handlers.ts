@@ -101,9 +101,6 @@ export class Handlers {
 
     private _onMessageHandler(message: Message<any>, handler: Handler) {
         try {
-
-            message.body = this._deserializeBody(message);
-
             handler.handlerFn.apply(handler.options.context, [message]);
 
         } catch (e) {

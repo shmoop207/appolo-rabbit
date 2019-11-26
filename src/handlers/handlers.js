@@ -62,7 +62,6 @@ let Handlers = class Handlers {
     }
     _onMessageHandler(message, handler) {
         try {
-            message.body = this._deserializeBody(message);
             handler.handlerFn.apply(handler.options.context, [message]);
         }
         catch (e) {
