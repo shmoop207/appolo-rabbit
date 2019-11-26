@@ -61,7 +61,7 @@ let Handlers = class Handlers {
             handler.handlerFn.apply(handler.options.context, [message]);
         }
         catch (e) {
-            if (message.properties.headers["x-reply"]) {
+            if (message.properties.headers["x-reply"] || message.properties.headers["sequence_end"]) {
                 message.replyReject(e);
                 return;
             }

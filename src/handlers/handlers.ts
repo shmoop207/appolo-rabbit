@@ -101,7 +101,7 @@ export class Handlers {
 
         } catch (e) {
 
-            if (message.properties.headers["x-reply"]) {
+            if (message.properties.headers["x-reply"] || message.properties.headers["sequence_end"]) {
                 message.replyReject(e);
                 return;
             }

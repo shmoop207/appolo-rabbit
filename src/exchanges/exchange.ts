@@ -42,7 +42,7 @@ export class Exchange {
         let opts: Options.Publish = Object.assign({
             headers: {},
             timestamp: Date.now(),
-            messageId: Guid.guid(),
+            messageId: msg.messageId || Guid.guid(),
             contentEncoding: "utf8",
         } as Partial<Options.Publish>, _.omit(msg, ["body", "routingKey"]));
 

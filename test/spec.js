@@ -53,7 +53,7 @@ describe("bus module Spec", function () {
         await appolo_utils_1.Promises.delay(3000);
         worked.should.be.ok;
     });
-    it("should replay", async () => {
+    it.only("should replay", async () => {
         rabbit.handle("request.aaaaa.bbbb", (msg) => {
             msg.replyResolve({ counter: msg.body.counter + 2 });
         });

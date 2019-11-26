@@ -97,6 +97,7 @@ export class Requests {
 
         let dto: IRequestOptions = {
             ...msg,
+            messageId: correlationId,
             correlationId,
             replyTo: this.topology.replyQueue.name,
             confirm: false,
@@ -199,7 +200,7 @@ export class Requests {
 
         this._finishReply(msg.properties.correlationId, request.timeout);
 
-        if (msg.properties.headers["x-reply"]) {
+        if (msg.properties.headers["x-reply"] || msg.properties.headers["sequence_end"]) {
             request.deferred.reject(error);
             return;
         }

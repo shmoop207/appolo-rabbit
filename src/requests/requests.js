@@ -48,7 +48,7 @@ let Requests = class Requests {
         }
         let correlationId = appolo_utils_1.Guid.guid();
         let headers = Object.assign({}, msg.headers, { "x-reply": true });
-        let dto = Object.assign({}, msg, { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
+        let dto = Object.assign({}, msg, { messageId: correlationId, correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
         let deferred = appolo_utils_1.Promises.defer();
         let timeout = null;
         if (dto.replyTimeout) {
@@ -120,7 +120,7 @@ let Requests = class Requests {
             return;
         }
         this._finishReply(msg.properties.correlationId, request.timeout);
-        if (msg.properties.headers["x-reply"]) {
+        if (msg.properties.headers["x-reply"] || msg.properties.headers["sequence_end"]) {
             request.deferred.reject(error);
             return;
         }

@@ -21,7 +21,7 @@ let Exchange = class Exchange {
         let opts = Object.assign({
             headers: {},
             timestamp: Date.now(),
-            messageId: appolo_utils_1.Guid.guid(),
+            messageId: msg.messageId || appolo_utils_1.Guid.guid(),
             contentEncoding: "utf8",
         }, _.omit(msg, ["body", "routingKey"]));
         opts.contentType = this.serializers.getContentType(msg);
