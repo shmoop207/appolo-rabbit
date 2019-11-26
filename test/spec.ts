@@ -76,7 +76,7 @@ describe("bus module Spec", function () {
 
     });
 
-    it.only("should replay", async () => {
+    it("should replay", async () => {
 
         rabbit.handle("request.aaaaa.bbbb", (msg: Message<{ counter: number }>) => {
             msg.replyResolve({counter: msg.body.counter + 2});

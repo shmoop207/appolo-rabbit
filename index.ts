@@ -8,6 +8,7 @@ import {IConnectionOptions} from "./src/connection/IConnectionOptions";
 import {Handler} from "./src/handlers/handler";
 import {IRequestOptions, IPublishOptions} from "./src/exchanges/IPublishOptions";
 import {App, createApp} from 'appolo-engine';
+import {Defaults} from "./src/common/defaults";
 
 export {
     Rabbit,
@@ -23,9 +24,9 @@ export {
 }
 
 export async function createRabbit(options: IOptions) {
-    let app = createApp({root:__dirname});
+    let app = createApp({root: __dirname});
 
-    app.injector.addObject("options", options);
+    app.injector.addObject("options", Object.assign({}, Defaults, options));
 
     await app.launch();
 

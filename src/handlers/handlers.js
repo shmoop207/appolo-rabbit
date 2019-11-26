@@ -37,18 +37,23 @@ let Handlers = class Handlers {
     }
     _handleMessage(opts) {
         let message = new message_1.Message(opts.queue, opts.message);
-        let key = `${message.queue}.${message.type}`;
-        let hasHandler = this._events.hasListener(key);
-        if (!hasHandler) {
-            this._handleUnhandledMessage(message);
-            return;
+        try {
+            let key = `${message.queue}.${message.type}`;
+            let hasHandler = this._events.hasListener(key);
+            message.body = this._deserializeBody(message);
+            if (!hasHandler) {
+                this._handleUnhandledMessage(message);
+                return;
+            }
+            this._events.fireEvent(key, message);
         }
-        this._events.fireEvent(key, message);
+        catch (e) {
+            message.nack();
+        }
     }
     _handleUnhandledMessage(message) {
         let fn = this._onUnhandled || this.options.onUnhandled;
         try {
-            message.body = this._deserializeBody(message);
             fn(message);
         }
         catch (e) {

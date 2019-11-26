@@ -68,29 +68,36 @@ export class Handlers {
 
         let message = new Message(opts.queue, opts.message);
 
-        let key = `${message.queue}.${message.type}`;
+        try {
 
-        let hasHandler = this._events.hasListener(key);
+            let key = `${message.queue}.${message.type}`;
 
-        if (!hasHandler) {
-            this._handleUnhandledMessage(message);
-            return;
+            let hasHandler = this._events.hasListener(key);
+
+            message.body = this._deserializeBody(message);
+
+            if (!hasHandler) {
+                this._handleUnhandledMessage(message);
+                return;
+            }
+
+            this._events.fireEvent(key, message)
+        } catch (e) {
+            message.nack();
         }
 
-        this._events.fireEvent(key, message)
+
     }
 
     private _handleUnhandledMessage(message: Message<any>) {
         let fn = this._onUnhandled || this.options.onUnhandled;
         try {
-            message.body = this._deserializeBody(message);
             fn(message);
 
         } catch (e) {
             message.nack();
         }
     }
-
 
     private _onMessageHandler(message: Message<any>, handler: Handler) {
         try {
