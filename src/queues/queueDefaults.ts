@@ -22,6 +22,6 @@ export const ReplyQueueDefaults: Partial<IQueueOptions> = {
     autoDelete: true,
     exclusive: true,
     noAck: true,
-    expires: 500,
+    expires: 5000,
     messageTtl: 1000 * 60 * 10
 };

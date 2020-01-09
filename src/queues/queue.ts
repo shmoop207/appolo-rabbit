@@ -101,11 +101,19 @@ export class Queue {
             timestamp: Date.now(),
             messageId: Guid.guid(),
             contentEncoding: "utf8",
-            correlationId: message.properties.correlationId,
-            contentType: this.serializers.getContentType(data)
+            correlationId: message.properties.correlationId || message.properties.messageId,
+            contentType: this.serializers.getContentType(data),
+            replyTo: message.properties.replyTo,
+            type: message.type,
         };
 
         dto = Object.assign({}, options || {}, dto);
+
+        if(!dto.headers){
+            dto.headers = {}
+        }
+
+        dto.headers["sequence_end"] = true;
 
         let content = this.serializers.getSerializer(dto.contentType).serialize(data);
 
