@@ -5,6 +5,7 @@ const chai = require("chai");
 const sinonChai = require("sinon-chai");
 const index_1 = require("../index");
 const appolo_utils_1 = require("appolo-utils");
+const requestError_1 = require("../src/errors/requestError");
 let should = require('chai').should();
 chai.use(sinonChai);
 describe("bus module Spec", function () {
@@ -64,6 +65,25 @@ describe("bus module Spec", function () {
             body: { counter: 1 }
         });
         result.counter.should.be.eq(3);
+    });
+    it("should replay reject", async () => {
+        rabbit.handle("request.aaaaa.ccc", (msg) => {
+            msg.replyReject(new requestError_1.RequestError("bla", { test: 1 }));
+        });
+        await rabbit.connect();
+        await rabbit.subscribe();
+        try {
+            let result = await rabbit.request("test", {
+                routingKey: "request.aaaaa.ccc",
+                body: { counter: 1 }
+            });
+            result.should.be.ok;
+        }
+        catch (e) {
+            e.message.should.be.eq("bla");
+            e.data.test.should.be.eq(1);
+            e.should.be.ok;
+        }
     });
     it("should replay stream", async () => {
         var e_1, _a;

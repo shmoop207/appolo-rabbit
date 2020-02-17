@@ -145,7 +145,9 @@ export class Requests {
             request.deferred.resolve(msg.body.data);
         } else {
 
-            let error = new RequestError(_.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message, msg);
+            let errorMessage = _.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message;
+
+            let error = new RequestError(errorMessage, msg.body.data, msg);
 
             request.deferred.reject(error);
         }

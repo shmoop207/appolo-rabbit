@@ -77,7 +77,8 @@ let Requests = class Requests {
             request.deferred.resolve(msg.body.data);
         }
         else {
-            let error = new requestError_1.RequestError(_.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message, msg);
+            let errorMessage = _.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message;
+            let error = new requestError_1.RequestError(errorMessage, msg.body.data, msg);
             request.deferred.reject(error);
         }
     }
