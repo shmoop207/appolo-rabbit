@@ -32,8 +32,8 @@ let Requests = class Requests {
             throw new Error(`reply queue not defined`);
         }
         let correlationId = appolo_utils_1.Guid.guid();
-        let headers = Object.assign({}, msg.headers, { "x-reply-stream": true });
-        let dto = Object.assign({}, msg, { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
+        let headers = Object.assign(Object.assign({}, msg.headers), { "x-reply-stream": true });
+        let dto = Object.assign(Object.assign({}, msg), { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
         let timeout = null;
         if (dto.replyTimeout) {
             timeout = setTimeout(() => this._onTimeout(correlationId), dto.replyTimeout);
@@ -47,8 +47,8 @@ let Requests = class Requests {
             throw new Error(`reply queue not defined`);
         }
         let correlationId = appolo_utils_1.Guid.guid();
-        let headers = Object.assign({}, msg.headers, { "x-reply": true });
-        let dto = Object.assign({}, msg, { messageId: correlationId, correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
+        let headers = Object.assign(Object.assign({}, msg.headers), { "x-reply": true });
+        let dto = Object.assign(Object.assign({}, msg), { messageId: correlationId, correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
         let deferred = appolo_utils_1.Promises.defer();
         let timeout = null;
         if (dto.replyTimeout) {
