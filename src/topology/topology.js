@@ -63,7 +63,8 @@ let Topology = class Topology {
     _bindKey(item) {
         let queue = this._queues.get(item.queue);
         if (!queue) {
-            throw new Error(`failed to find queue for ${item.queue}`);
+            return;
+            //throw new Error(`failed to find queue for ${item.queue}`)
         }
         return queue.bind(item.exchange, item.keys);
     }
