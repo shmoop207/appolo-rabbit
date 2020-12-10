@@ -7,7 +7,7 @@ import {IExchangeOptions} from "./src/exchanges/IExchangeOptions";
 import {IConnectionOptions} from "./src/connection/IConnectionOptions";
 import {Handler} from "./src/handlers/handler";
 import {IRequestOptions, IPublishOptions} from "./src/exchanges/IPublishOptions";
-import {App, createApp} from 'appolo-engine';
+import {App, createApp} from '@appolo/engine';
 import {Defaults} from "./src/common/defaults";
 
 export {

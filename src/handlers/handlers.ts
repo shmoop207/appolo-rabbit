@@ -3,10 +3,10 @@ import {Message} from "../messages/message";
 import {Handler} from "./handler";
 import {ConsumeMessage} from "amqplib";
 import * as _ from "lodash";
-import {define, inject, singleton, initMethod} from 'appolo-engine';
+import {define, inject, singleton, init} from '@appolo/inject';
 import {Serializers} from "../serializers/serializers";
-import {Dispatcher} from "../events/dispatcher";
-import {EventDispatcher} from "appolo-event-dispatcher";
+import {EventsDispatcher} from "../events/eventsDispatcher";
+import {EventDispatcher} from "@appolo/events";
 import {IHandlerFn, IHandlerOptions} from "./IHandlerOptions";
 import {IOptions} from "../common/IOptions";
 
@@ -14,16 +14,16 @@ import {IOptions} from "../common/IOptions";
 @singleton()
 export class Handlers {
 
-    @inject() private dispatcher: Dispatcher;
+    @inject() private eventsDispatcher: EventsDispatcher;
     @inject() private serializers: Serializers;
     @inject() private options: IOptions;
 
     private _events = new EventDispatcher();
     private _onUnhandled: IHandlerFn;
 
-    @initMethod()
+    @init()
     public initialize() {
-        this.dispatcher.queueMessageEvent.on(this._handleMessage, this)
+        this.eventsDispatcher.queueMessageEvent.on(this._handleMessage, this)
     }
 
     public onUnhandled(handler: IHandlerFn) {

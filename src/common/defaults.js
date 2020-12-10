@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Defaults = void 0;
 exports.Defaults = {
     exchanges: [],
     queues: [],

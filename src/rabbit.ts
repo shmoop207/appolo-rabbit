@@ -1,6 +1,7 @@
-import {define, inject, initMethod} from 'appolo-engine';
+import {} from '@appolo/engine';
+import {define, inject, init} from '@appolo/inject';
 import * as _ from "lodash";
-import {Promises} from "appolo-utils";
+import {Promises} from "@appolo/utils";
 import {Exchange} from "./exchanges/exchange";
 import {Queue} from "./queues/queue";
 import {Handler} from "./handlers/handler";
@@ -9,11 +10,11 @@ import {Topology} from "./topology/topology";
 import {Handlers} from "./handlers/handlers";
 import {Requests} from "./requests/requests";
 import {Connection} from "./connection/connection";
-import {Dispatcher} from "./events/dispatcher";
+import {EventsDispatcher} from "./events/eventsDispatcher";
 import {Duplex, PassThrough, Readable, Writable} from "stream";
 import {IHandlerFn, IHandlerOptions} from "./handlers/IHandlerOptions";
 import {IPublishOptions, IRequestOptions} from "./exchanges/IPublishOptions";
-import {EventDispatcher} from "appolo-event-dispatcher";
+import {EventDispatcher} from "@appolo/events";
 
 @define()
 export class Rabbit extends EventDispatcher {
@@ -22,13 +23,13 @@ export class Rabbit extends EventDispatcher {
     @inject() private handlers: Handlers;
     @inject() private requests: Requests;
     @inject() private connection: Connection;
-    @inject() private dispatcher: Dispatcher;
+    @inject() private eventsDispatcher: EventsDispatcher;
 
-    @initMethod()
+    @init()
     private _initialize() {
-        this.dispatcher.connectionClosedEvent.on(() => this.fireEvent("closed"));
-        this.dispatcher.connectionFailedEvent.on(({error}) => this.fireEvent("failed", error));
-        this.dispatcher.connectionConnectedEvent.on(() => this.fireEvent("connected"));
+        this.eventsDispatcher.connectionClosedEvent.on(() => this.fireEvent("closed"));
+        this.eventsDispatcher.connectionFailedEvent.on(({error}) => this.fireEvent("failed", error));
+        this.eventsDispatcher.connectionConnectedEvent.on(() => this.fireEvent("connected"));
     }
 
     public async connect(): Promise<void> {

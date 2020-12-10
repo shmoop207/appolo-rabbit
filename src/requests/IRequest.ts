@@ -1,4 +1,4 @@
-import {Deferred} from "appolo-utils/lib/promises";
+import {Deferred} from "@appolo/utils";
 import {PassThrough} from "stream";
 import Timeout = NodeJS.Timeout;
 

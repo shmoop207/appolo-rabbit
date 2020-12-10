@@ -1,17 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Handlers = void 0;
 const tslib_1 = require("tslib");
 const message_1 = require("../messages/message");
 const handler_1 = require("./handler");
 const _ = require("lodash");
-const appolo_engine_1 = require("appolo-engine");
-const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
+const inject_1 = require("@appolo/inject");
+const events_1 = require("@appolo/events");
 let Handlers = class Handlers {
     constructor() {
-        this._events = new appolo_event_dispatcher_1.EventDispatcher();
+        this._events = new events_1.EventDispatcher();
     }
     initialize() {
-        this.dispatcher.queueMessageEvent.on(this._handleMessage, this);
+        this.eventsDispatcher.queueMessageEvent.on(this._handleMessage, this);
     }
     onUnhandled(handler) {
         this._onUnhandled = handler;
@@ -82,20 +83,20 @@ let Handlers = class Handlers {
     }
 };
 tslib_1.__decorate([
-    appolo_engine_1.inject()
-], Handlers.prototype, "dispatcher", void 0);
+    inject_1.inject()
+], Handlers.prototype, "eventsDispatcher", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Handlers.prototype, "serializers", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Handlers.prototype, "options", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.initMethod()
+    inject_1.init()
 ], Handlers.prototype, "initialize", null);
 Handlers = tslib_1.__decorate([
-    appolo_engine_1.define(),
-    appolo_engine_1.singleton()
+    inject_1.define(),
+    inject_1.singleton()
 ], Handlers);
 exports.Handlers = Handlers;
 //# sourceMappingURL=handlers.js.map

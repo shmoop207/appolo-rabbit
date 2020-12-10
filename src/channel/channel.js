@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Channel = void 0;
 const tslib_1 = require("tslib");
-const appolo_engine_1 = require("appolo-engine");
+const inject_1 = require("@appolo/inject");
 const _ = require("lodash");
 let Channel = class Channel {
     constructor(_options) {
@@ -71,11 +72,11 @@ let Channel = class Channel {
         return Promise.resolve();
     }
     _onChannelClose() {
-        this.dispatcher.channelCloseEvent.fireEvent({ channel: this });
+        this.eventsDispatcher.channelCloseEvent.fireEvent({ channel: this });
         this._clear();
     }
     _onChannelError(e) {
-        this.dispatcher.channelErrorEvent.fireEvent({ channel: this, error: e });
+        this.eventsDispatcher.channelErrorEvent.fireEvent({ channel: this, error: e });
         this._clear();
     }
     _clear() {
@@ -83,13 +84,13 @@ let Channel = class Channel {
     }
 };
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Channel.prototype, "connection", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
-], Channel.prototype, "dispatcher", void 0);
+    inject_1.inject()
+], Channel.prototype, "eventsDispatcher", void 0);
 Channel = tslib_1.__decorate([
-    appolo_engine_1.define()
+    inject_1.define()
 ], Channel);
 exports.Channel = Channel;
 //# sourceMappingURL=channel.js.map

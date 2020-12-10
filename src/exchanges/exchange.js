@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Exchange = void 0;
 const tslib_1 = require("tslib");
 const _ = require("lodash");
-const appolo_utils_1 = require("appolo-utils");
-const appolo_engine_1 = require("appolo-engine");
+const utils_1 = require("@appolo/utils");
+const inject_1 = require("@appolo/inject");
 const channel_1 = require("../channel/channel");
 let Exchange = class Exchange {
     constructor(_options) {
@@ -21,7 +22,7 @@ let Exchange = class Exchange {
         let opts = Object.assign({
             headers: {},
             timestamp: Date.now(),
-            messageId: msg.messageId || appolo_utils_1.Guid.guid(),
+            messageId: msg.messageId || utils_1.Guid.guid(),
             contentEncoding: "utf8",
         }, _.omit(msg, ["body", "routingKey"]));
         opts.contentType = this.serializers.getContentType(msg);
@@ -34,16 +35,16 @@ let Exchange = class Exchange {
     }
 };
 tslib_1.__decorate([
-    appolo_engine_1.injectFactoryMethod(channel_1.Channel)
+    inject_1.factoryMethod(channel_1.Channel)
 ], Exchange.prototype, "createChanel", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Exchange.prototype, "serializers", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Exchange.prototype, "connection", void 0);
 Exchange = tslib_1.__decorate([
-    appolo_engine_1.define()
+    inject_1.define()
 ], Exchange);
 exports.Exchange = Exchange;
 //# sourceMappingURL=exchange.js.map

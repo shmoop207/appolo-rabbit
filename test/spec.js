@@ -4,7 +4,7 @@ const tslib_1 = require("tslib");
 const chai = require("chai");
 const sinonChai = require("sinon-chai");
 const index_1 = require("../index");
-const appolo_utils_1 = require("appolo-utils");
+const utils_1 = require("@appolo/utils");
 const requestError_1 = require("../src/errors/requestError");
 let should = require('chai').should();
 chai.use(sinonChai);
@@ -38,7 +38,7 @@ describe("bus module Spec", function () {
         });
         await rabbit.subscribe();
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
-        await appolo_utils_1.Promises.delay(3000);
+        await utils_1.Promises.delay(3000);
         worked.should.be.ok;
     });
     it("should reconnect connect", async () => {
@@ -51,7 +51,7 @@ describe("bus module Spec", function () {
         await rabbit.subscribe();
         await rabbit.reconnect();
         await rabbit.publish("test", { routingKey: "aa.bb.cc", body: { working: true } });
-        await appolo_utils_1.Promises.delay(3000);
+        await utils_1.Promises.delay(3000);
         worked.should.be.ok;
     });
     it("should replay", async () => {

@@ -1,11 +1,11 @@
 import {ISerializer} from "./ISerializer";
-import {define, inject, singleton, alias, injectAlias} from 'appolo-engine';
+import {define, inject, singleton, alias} from '@appolo/inject';
 
 @define()
 @singleton()
 export class Serializers {
 
-    @injectAlias("ISerializer", "contentType") private _serializes: { [index: string]: ISerializer };
+    @alias("ISerializer", "contentType") private _serializes: { [index: string]: ISerializer };
 
 
     public getSerializer(contentType: string): ISerializer {

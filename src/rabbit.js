@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Rabbit = void 0;
 const tslib_1 = require("tslib");
-const appolo_engine_1 = require("appolo-engine");
-const appolo_utils_1 = require("appolo-utils");
-const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
-let Rabbit = class Rabbit extends appolo_event_dispatcher_1.EventDispatcher {
+const inject_1 = require("@appolo/inject");
+const utils_1 = require("@appolo/utils");
+const events_1 = require("@appolo/events");
+let Rabbit = class Rabbit extends events_1.EventDispatcher {
     _initialize() {
-        this.dispatcher.connectionClosedEvent.on(() => this.fireEvent("closed"));
-        this.dispatcher.connectionFailedEvent.on(({ error }) => this.fireEvent("failed", error));
-        this.dispatcher.connectionConnectedEvent.on(() => this.fireEvent("connected"));
+        this.eventsDispatcher.connectionClosedEvent.on(() => this.fireEvent("closed"));
+        this.eventsDispatcher.connectionFailedEvent.on(({ error }) => this.fireEvent("failed", error));
+        this.eventsDispatcher.connectionConnectedEvent.on(() => this.fireEvent("connected"));
     }
     async connect() {
         await this.connection.createConnection();
@@ -32,14 +33,14 @@ let Rabbit = class Rabbit extends appolo_event_dispatcher_1.EventDispatcher {
     }
     async subscribe(queueName) {
         if (!queueName) {
-            return appolo_utils_1.Promises.map(this.topology.queues.values(), queue => this.subscribe(queue.name));
+            return utils_1.Promises.map(this.topology.queues.values(), queue => this.subscribe(queue.name));
         }
         let queue = this._getQueue(queueName);
         await queue.subscribe();
     }
     async unSubscribe(queueName) {
         if (!queueName) {
-            return appolo_utils_1.Promises.map(this.topology.queues.values(), queue => this.unSubscribe(queue.name));
+            return utils_1.Promises.map(this.topology.queues.values(), queue => this.unSubscribe(queue.name));
         }
         let queue = this._getQueue(queueName);
         await queue.unSubscribe();
@@ -78,25 +79,25 @@ let Rabbit = class Rabbit extends appolo_event_dispatcher_1.EventDispatcher {
     }
 };
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Rabbit.prototype, "topology", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Rabbit.prototype, "handlers", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Rabbit.prototype, "requests", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Rabbit.prototype, "connection", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
-], Rabbit.prototype, "dispatcher", void 0);
+    inject_1.inject()
+], Rabbit.prototype, "eventsDispatcher", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.initMethod()
+    inject_1.init()
 ], Rabbit.prototype, "_initialize", null);
 Rabbit = tslib_1.__decorate([
-    appolo_engine_1.define()
+    inject_1.define()
 ], Rabbit);
 exports.Rabbit = Rabbit;
 //# sourceMappingURL=rabbit.js.map

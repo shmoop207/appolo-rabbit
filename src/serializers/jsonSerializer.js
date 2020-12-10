@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JsonSerializer = void 0;
 const tslib_1 = require("tslib");
-const appolo_engine_1 = require("appolo-engine");
+const inject_1 = require("@appolo/inject");
 let JsonSerializer = class JsonSerializer {
     get contentType() {
         return "application/json";
@@ -17,9 +18,9 @@ let JsonSerializer = class JsonSerializer {
     }
 };
 JsonSerializer = tslib_1.__decorate([
-    appolo_engine_1.define(),
-    appolo_engine_1.singleton(),
-    appolo_engine_1.alias("ISerializer")
+    inject_1.define(),
+    inject_1.singleton(),
+    inject_1.alias("ISerializer")
 ], JsonSerializer);
 exports.JsonSerializer = JsonSerializer;
 //# sourceMappingURL=jsonSerializer.js.map

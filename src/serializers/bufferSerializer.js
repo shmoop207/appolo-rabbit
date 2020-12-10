@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BufferSerializer = void 0;
 const tslib_1 = require("tslib");
-const appolo_engine_1 = require("appolo-engine");
+const inject_1 = require("@appolo/inject");
 let BufferSerializer = class BufferSerializer {
     get contentType() {
         return "application/octet-stream";
@@ -22,9 +23,9 @@ let BufferSerializer = class BufferSerializer {
     }
 };
 BufferSerializer = tslib_1.__decorate([
-    appolo_engine_1.define(),
-    appolo_engine_1.singleton(),
-    appolo_engine_1.alias("ISerializer")
+    inject_1.define(),
+    inject_1.singleton(),
+    inject_1.alias("ISerializer")
 ], BufferSerializer);
 exports.BufferSerializer = BufferSerializer;
 //# sourceMappingURL=bufferSerializer.js.map

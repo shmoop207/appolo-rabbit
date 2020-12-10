@@ -2,7 +2,7 @@ import chai = require('chai');
 import sinon = require('sinon');
 import    sinonChai = require("sinon-chai");
 import {createRabbit, Message, Rabbit} from "../index";
-import {Promises} from "appolo-utils";
+import {Promises} from "@appolo/utils";
 import {RequestError} from "../src/errors/requestError";
 
 let should = require('chai').should();

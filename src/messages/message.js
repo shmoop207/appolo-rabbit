@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Message = void 0;
 const stream_1 = require("stream");
 const IPublishOptions_1 = require("../exchanges/IPublishOptions");
 class Message {

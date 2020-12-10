@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Serializers = void 0;
 const tslib_1 = require("tslib");
-const appolo_engine_1 = require("appolo-engine");
+const inject_1 = require("@appolo/inject");
 let Serializers = class Serializers {
     getSerializer(contentType) {
         let serializer = this._serializes[contentType] || this._serializes["application/octet-stream"];
@@ -23,11 +24,11 @@ let Serializers = class Serializers {
     }
 };
 tslib_1.__decorate([
-    appolo_engine_1.injectAlias("ISerializer", "contentType")
+    inject_1.alias("ISerializer", "contentType")
 ], Serializers.prototype, "_serializes", void 0);
 Serializers = tslib_1.__decorate([
-    appolo_engine_1.define(),
-    appolo_engine_1.singleton()
+    inject_1.define(),
+    inject_1.singleton()
 ], Serializers);
 exports.Serializers = Serializers;
 //# sourceMappingURL=serializers.js.map

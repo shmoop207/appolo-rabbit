@@ -1,12 +1,12 @@
 import amqplib = require('amqplib');
 import * as _ from "lodash";
-import {Guid, Promises} from "appolo-utils";
+import {Guid, Promises} from "@appolo/utils";
 import {ConsumeMessage, Options} from "amqplib";
 import {Channel} from "../channel/channel";
 import {Message} from "../messages/message";
-import {Dispatcher} from "../events/dispatcher";
+import {EventsDispatcher} from "../events/eventsDispatcher";
 import {Serializers} from "../serializers/serializers";
-import {define, inject, injectFactoryMethod} from 'appolo-engine';
+import {define, inject, factoryMethod} from '@appolo/inject';
 import {IQueueOptions} from "./IQueueOptions";
 import {IChannelOptions} from "../channel/IChannelOptions";
 import {IPublishOptions} from "../exchanges/IPublishOptions";
@@ -16,9 +16,9 @@ export class Queue {
 
     private _channel: Channel;
     private _isSubscribed: boolean;
-    @inject() private dispatcher: Dispatcher;
+    @inject() private eventsDispatcher: EventsDispatcher;
     @inject() private serializers: Serializers;
-    @injectFactoryMethod(Channel) private createChanel: (opts: IChannelOptions) => Channel;
+    @factoryMethod(Channel) private createChanel: (opts: IChannelOptions) => Channel;
 
 
     constructor(private _options: IQueueOptions) {
@@ -81,7 +81,7 @@ export class Queue {
 
     private _onMessage(message: ConsumeMessage) {
 
-        this.dispatcher.queueMessageEvent.fireEvent({message, queue: this});
+        this.eventsDispatcher.queueMessageEvent.fireEvent({message, queue: this});
     }
 
     public ack(msg: ConsumeMessage) {

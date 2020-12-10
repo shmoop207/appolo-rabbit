@@ -1,16 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Dispatcher = void 0;
 const tslib_1 = require("tslib");
-const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
-const appolo_engine_1 = require("appolo-engine");
+const events_1 = require("@appolo/events");
+const inject_1 = require("@appolo/inject");
 let Dispatcher = class Dispatcher {
     constructor() {
-        this._queueMessageEvent = new appolo_event_dispatcher_1.Event();
-        this._channelCloseEvent = new appolo_event_dispatcher_1.Event();
-        this._channelErrorEvent = new appolo_event_dispatcher_1.Event();
-        this._connectionConnectedEvent = new appolo_event_dispatcher_1.Event();
-        this._connectionClosedEvent = new appolo_event_dispatcher_1.Event();
-        this._connectionFailedEvent = new appolo_event_dispatcher_1.Event();
+        this._queueMessageEvent = new events_1.Event();
+        this._channelCloseEvent = new events_1.Event();
+        this._channelErrorEvent = new events_1.Event();
+        this._connectionConnectedEvent = new events_1.Event();
+        this._connectionClosedEvent = new events_1.Event();
+        this._connectionFailedEvent = new events_1.Event();
     }
     get queueMessageEvent() {
         return this._queueMessageEvent;
@@ -32,8 +33,9 @@ let Dispatcher = class Dispatcher {
     }
 };
 Dispatcher = tslib_1.__decorate([
-    appolo_engine_1.define(),
-    appolo_engine_1.singleton()
+    inject_1.define(),
+    inject_1.singleton(),
+    inject_1.override()
 ], Dispatcher);
 exports.Dispatcher = Dispatcher;
 //# sourceMappingURL=dispatcher.js.map

@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Requests = void 0;
 const tslib_1 = require("tslib");
-const appolo_utils_1 = require("appolo-utils");
+const utils_1 = require("@appolo/utils");
 const _ = require("lodash");
-const appolo_engine_1 = require("appolo-engine");
+const inject_1 = require("@appolo/inject");
 const stream_1 = require("stream");
 const requestError_1 = require("../errors/requestError");
 const IPublishOptions_1 = require("../exchanges/IPublishOptions");
@@ -31,7 +32,7 @@ let Requests = class Requests {
         if (!this.topology.hasReplyQueue) {
             throw new Error(`reply queue not defined`);
         }
-        let correlationId = appolo_utils_1.Guid.guid();
+        let correlationId = utils_1.Guid.guid();
         let headers = Object.assign(Object.assign({}, msg.headers), { "x-reply-stream": true });
         let dto = Object.assign(Object.assign({}, msg), { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
         let timeout = null;
@@ -46,10 +47,10 @@ let Requests = class Requests {
         if (!this.topology.hasReplyQueue) {
             throw new Error(`reply queue not defined`);
         }
-        let correlationId = appolo_utils_1.Guid.guid();
+        let correlationId = utils_1.Guid.guid();
         let headers = Object.assign(Object.assign({}, msg.headers), { "x-reply": true });
         let dto = Object.assign(Object.assign({}, msg), { messageId: correlationId, correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
-        let deferred = appolo_utils_1.Promises.defer();
+        let deferred = utils_1.Promises.defer();
         let timeout = null;
         if (dto.replyTimeout) {
             dto.expiration = dto.replyTimeout;
@@ -132,14 +133,14 @@ let Requests = class Requests {
     }
 };
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Requests.prototype, "topology", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Requests.prototype, "handlers", void 0);
 Requests = tslib_1.__decorate([
-    appolo_engine_1.define(),
-    appolo_engine_1.singleton()
+    inject_1.define(),
+    inject_1.singleton()
 ], Requests);
 exports.Requests = Requests;
 //# sourceMappingURL=requests.js.map

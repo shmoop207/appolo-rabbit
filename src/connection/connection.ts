@@ -1,4 +1,4 @@
-import {define, inject, singleton} from 'appolo-engine';
+import {define, inject, singleton} from '@appolo/inject';
 import url = require("url");
 import {
     Options,
@@ -10,7 +10,7 @@ import {
 import * as _ from "lodash";
 import {IOptions} from "../common/IOptions";
 import {ConnectionsDefaults} from "./connectionsDefaults";
-import {Dispatcher} from "../events/dispatcher";
+import {EventsDispatcher} from "../events/eventsDispatcher";
 import {Channel} from "../channel/channel";
 
 @define()
@@ -19,7 +19,7 @@ export class Connection {
 
     private _connection: AmqplibConnection;
     @inject("options") private _options: IOptions;
-    @inject() private dispatcher: Dispatcher;
+    @inject() private eventsDispatcher: EventsDispatcher;
 
     private _isConnected: boolean;
 
@@ -39,12 +39,12 @@ export class Connection {
         this._connection.on('close', () => this._onConnectionClose());
         this._connection.on('error', (e) => this._onConnectionError(e));
 
-        this.dispatcher.channelErrorEvent.on(this._onChannelError, this);
-        this.dispatcher.channelCloseEvent.on(this._onChannelClose, this);
+        this.eventsDispatcher.channelErrorEvent.on(this._onChannelError, this);
+        this.eventsDispatcher.channelCloseEvent.on(this._onChannelClose, this);
 
         this._isConnected = true;
 
-        this.dispatcher.connectionConnectedEvent.fireEvent({connection: this})
+        this.eventsDispatcher.connectionConnectedEvent.fireEvent({connection: this})
 
 
     }
@@ -68,7 +68,7 @@ export class Connection {
 
         if (this._isConnected) {
             this._clear();
-            this.dispatcher.connectionClosedEvent.fireEvent({connection: this})
+            this.eventsDispatcher.connectionClosedEvent.fireEvent({connection: this})
         }
     }
 
@@ -76,7 +76,7 @@ export class Connection {
 
         if (this._isConnected) {
             this._clear();
-            this.dispatcher.connectionFailedEvent.fireEvent({connection: this, error: e})
+            this.eventsDispatcher.connectionFailedEvent.fireEvent({connection: this, error: e})
         }
 
     }
@@ -99,8 +99,8 @@ export class Connection {
 
     private _clear() {
         this._connection.removeAllListeners();
-        this.dispatcher.channelErrorEvent.un(this._onChannelError, this);
-        this.dispatcher.channelCloseEvent.un(this._onChannelClose, this);
+        this.eventsDispatcher.channelErrorEvent.un(this._onChannelError, this);
+        this.eventsDispatcher.channelCloseEvent.un(this._onChannelClose, this);
 
         this._isConnected = false;
     }

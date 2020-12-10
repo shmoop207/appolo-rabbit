@@ -1,5 +1,5 @@
 import {ISerializer} from "./ISerializer";
-import {define, inject, singleton,alias} from 'appolo-engine';
+import {define, inject, singleton,alias} from '@appolo/inject';
 
 @define()
 @singleton()
@@ -10,7 +10,7 @@ export class JsonSerializer implements ISerializer {
         return "application/json"
     }
 
-    public deserialize(bytes: Buffer, encoding: string): any {
+    public deserialize(bytes: Buffer, encoding: "ascii" | "utf8" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "binary" | "hex"): any {
         return JSON.parse(bytes.toString(encoding || 'utf8'));
     }
 

@@ -1,4 +1,4 @@
-import {Event} from "appolo-event-dispatcher";
+import {Event} from "@appolo/events";
 import {HandlerDefaults} from "./handlerDefaults";
 import {IHandlerErrorFn, IHandlerFn, IHandlerOptions} from "./IHandlerOptions";
 

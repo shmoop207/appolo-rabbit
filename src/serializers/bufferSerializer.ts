@@ -1,5 +1,5 @@
 import {ISerializer} from "./ISerializer";
-import {define, inject, singleton,alias} from 'appolo-engine';
+import {define, inject, singleton,alias} from '@appolo/inject';
 
 @define()
 @singleton()

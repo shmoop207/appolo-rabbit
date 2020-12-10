@@ -1,14 +1,15 @@
-import {Event} from "appolo-event-dispatcher";
+import {Event} from "@appolo/events";
 import {ConsumeMessage} from "amqplib";
 import {Queue} from "../queues/queue";
 import {Channel} from "../channel/channel";
 
-import {define, inject, singleton} from 'appolo-engine';
+import {define, inject, singleton,override} from '@appolo/inject';
 import {Connection} from "../connection/connection";
 
 @define()
 @singleton()
-export class Dispatcher {
+@override()
+export class EventsDispatcher {
     private _queueMessageEvent = new Event<{ message: ConsumeMessage, queue: Queue }>();
     private _channelCloseEvent = new Event<{ channel: Channel }>();
     private _channelErrorEvent = new Event<{ channel: Channel, error: Error }>();

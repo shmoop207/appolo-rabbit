@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ReplyQueueDefaults = exports.RequestQueueDefaults = exports.QueueDefaults = void 0;
 exports.QueueDefaults = {
     subscribe: false,
     durable: true,

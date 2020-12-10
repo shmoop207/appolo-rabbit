@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Queue = void 0;
 const tslib_1 = require("tslib");
-const appolo_utils_1 = require("appolo-utils");
+const utils_1 = require("@appolo/utils");
 const channel_1 = require("../channel/channel");
-const appolo_engine_1 = require("appolo-engine");
+const inject_1 = require("@appolo/inject");
 let Queue = class Queue {
     constructor(_options) {
         this._options = _options;
@@ -26,7 +27,7 @@ let Queue = class Queue {
         return !!this._options.noAck;
     }
     async bind(exchange, keys) {
-        await appolo_utils_1.Promises.map(keys, key => this._channel.bindQueue(this._options.name, exchange, key));
+        await utils_1.Promises.map(keys, key => this._channel.bindQueue(this._options.name, exchange, key));
     }
     async subscribe() {
         if (this._isSubscribed) {
@@ -44,7 +45,7 @@ let Queue = class Queue {
         return result;
     }
     _onMessage(message) {
-        this.dispatcher.queueMessageEvent.fireEvent({ message, queue: this });
+        this.eventsDispatcher.queueMessageEvent.fireEvent({ message, queue: this });
     }
     ack(msg) {
         this._channel.ack(msg);
@@ -58,7 +59,7 @@ let Queue = class Queue {
     reply(message, data, options) {
         let dto = {
             timestamp: Date.now(),
-            messageId: appolo_utils_1.Guid.guid(),
+            messageId: utils_1.Guid.guid(),
             contentEncoding: "utf8",
             correlationId: message.properties.correlationId || message.properties.messageId,
             contentType: this.serializers.getContentType(data),
@@ -75,16 +76,16 @@ let Queue = class Queue {
     }
 };
 tslib_1.__decorate([
-    appolo_engine_1.inject()
-], Queue.prototype, "dispatcher", void 0);
+    inject_1.inject()
+], Queue.prototype, "eventsDispatcher", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.inject()
+    inject_1.inject()
 ], Queue.prototype, "serializers", void 0);
 tslib_1.__decorate([
-    appolo_engine_1.injectFactoryMethod(channel_1.Channel)
+    inject_1.factoryMethod(channel_1.Channel)
 ], Queue.prototype, "createChanel", void 0);
 Queue = tslib_1.__decorate([
-    appolo_engine_1.define()
+    inject_1.define()
 ], Queue);
 exports.Queue = Queue;
 //# sourceMappingURL=queue.js.map

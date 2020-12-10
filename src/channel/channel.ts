@@ -5,9 +5,9 @@ import {
     Options,
     Replies, Message
 } from "amqplib";
-import {define, inject, injectFactoryMethod} from 'appolo-engine';
+import {define, inject, factoryMethod} from '@appolo/inject';
 import {Connection} from "../connection/connection";
-import {Dispatcher} from "../events/dispatcher";
+import {EventsDispatcher} from "../events/eventsDispatcher";
 import * as _ from "lodash";
 import {IExchangeOptions} from "../exchanges/IExchangeOptions";
 import {IChannelOptions} from "./IChannelOptions";
@@ -19,7 +19,7 @@ export class Channel {
     private _consumerTag: string;
 
     @inject() private connection: Connection;
-    @inject() private dispatcher: Dispatcher;
+    @inject() private eventsDispatcher: EventsDispatcher;
 
     constructor(private _options: IChannelOptions) {
 
@@ -111,12 +111,12 @@ export class Channel {
     }
 
     private _onChannelClose() {
-        this.dispatcher.channelCloseEvent.fireEvent({channel: this});
+        this.eventsDispatcher.channelCloseEvent.fireEvent({channel: this});
         this._clear();
     }
 
     private _onChannelError(e: Error) {
-        this.dispatcher.channelErrorEvent.fireEvent({channel: this, error: e});
+        this.eventsDispatcher.channelErrorEvent.fireEvent({channel: this, error: e});
         this._clear();
     }
 

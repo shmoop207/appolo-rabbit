@@ -1,5 +1,5 @@
 import {IOptions} from "../common/IOptions";
-import {define, singleton, inject, initMethod, injectFactoryMethod} from 'appolo-engine';
+import {define, singleton, inject, init, factoryMethod} from '@appolo/inject';
 import * as _ from "lodash";
 import {
     Defaults,
@@ -7,14 +7,13 @@ import {
 import amqplib = require('amqplib');
 import {Exchange} from "../exchanges/exchange";
 import {Queue} from "../queues/queue";
-import {Promises} from "appolo-utils/lib/promises";
+import {Promises,Guid} from "@appolo/utils";
 import {Options} from "amqplib";
 import {Connection} from "../connection/connection";
 import {IExchangeOptions} from "../exchanges/IExchangeOptions";
 import {ExchangeDefaults} from "../exchanges/exchangeDefaults";
 import {IBindingOptions, IQueueOptions} from "../queues/IQueueOptions";
 import {QueueDefaults, ReplyQueueDefaults, RequestQueueDefaults} from "../queues/queueDefaults";
-import {Guid} from "appolo-utils";
 
 @define()
 @singleton()
@@ -25,10 +24,10 @@ export class Topology {
     private _replayQueue: Queue;
 
     @inject("options") private _options: IOptions;
-    @injectFactoryMethod(Exchange) private createExchange: (opts: IExchangeOptions) => Exchange;
-    @injectFactoryMethod(Queue) private createQueue: (opts: IQueueOptions) => Queue;
+    @factoryMethod(Exchange) private createExchange: (opts: IExchangeOptions) => Exchange;
+    @factoryMethod(Queue) private createQueue: (opts: IQueueOptions) => Queue;
 
-    @initMethod()
+    @init()
     public initialize() {
 
         this._options = Object.assign({}, Defaults, this._options);
