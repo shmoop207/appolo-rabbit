@@ -15,6 +15,7 @@ import {Duplex, PassThrough, Readable, Writable} from "stream";
 import {IHandlerFn, IHandlerOptions} from "./handlers/IHandlerOptions";
 import {IPublishOptions, IRequestOptions} from "./exchanges/IPublishOptions";
 import {EventDispatcher} from "@appolo/events";
+import {IBindingOptions} from "./queues/IQueueOptions";
 
 @define()
 export class Rabbit extends EventDispatcher {
@@ -40,6 +41,9 @@ export class Rabbit extends EventDispatcher {
         this.requests.initialize();
     }
 
+    public bind(item: IBindingOptions):Promise<void>{
+        return this.topology.bindKey(item)
+    }
 
     public onUnhandled(handler: IHandlerFn) {
         this.handlers.onUnhandled(handler);

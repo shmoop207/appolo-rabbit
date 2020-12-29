@@ -16,6 +16,9 @@ let Rabbit = class Rabbit extends events_1.EventDispatcher {
         await this.topology.createTopology();
         this.requests.initialize();
     }
+    bind(item) {
+        return this.topology.bindKey(item);
+    }
     onUnhandled(handler) {
         this.handlers.onUnhandled(handler);
     }

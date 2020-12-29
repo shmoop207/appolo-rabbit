@@ -58,9 +58,9 @@ let Topology = class Topology {
         return queue;
     }
     _bindKeys() {
-        return utils_1.Promises.map(this._options.bindings, item => this._bindKey(item));
+        return utils_1.Promises.map(this._options.bindings, item => this.bindKey(item));
     }
-    _bindKey(item) {
+    bindKey(item) {
         let queue = this._queues.get(item.queue);
         if (!queue) {
             return;

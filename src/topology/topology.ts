@@ -98,10 +98,10 @@ export class Topology {
     }
 
     private _bindKeys() {
-        return Promises.map(this._options.bindings, item => this._bindKey(item))
+        return Promises.map(this._options.bindings, item => this.bindKey(item))
     }
 
-    private _bindKey(item: IBindingOptions) {
+    public bindKey(item: IBindingOptions) {
         let queue = this._queues.get(item.queue);
 
         if (!queue) {
