@@ -4,7 +4,7 @@ import {Message} from "../messages/message";
 import {Handlers} from "../handlers/handlers";
 import {Handler} from "../handlers/handler";
 import {Promises, Deferred, Guid} from "@appolo/utils";
-import * as _ from "lodash";
+import {Objects} from "@appolo/utils";
 import Timeout = NodeJS.Timeout;
 import {define, inject, singleton, init} from '@appolo/inject';
 import {Duplex, PassThrough, Readable} from 'stream';
@@ -145,7 +145,7 @@ export class Requests {
             request.deferred.resolve(msg.body.data);
         } else {
 
-            let errorMessage = _.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message;
+            let errorMessage = Objects.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message;
 
             let error = new RequestError(errorMessage, msg.body.data, msg);
 

@@ -3,7 +3,9 @@ import {Queue} from "../queues/queue";
 import {PassThrough} from "stream";
 import {RequestError} from "../errors/requestError";
 import {IMessage, MessageFields, MessageProperties} from "./IMessage";
-import {IPublishOptions, StreamStatus} from "../exchanges/IPublishOptions";
+import {IPublishOptions, IRetry, StreamStatus} from "../exchanges/IPublishOptions";
+import {Time} from "@appolo/utils";
+import {Exchange} from "../exchanges/exchange";
 
 export class Message<T> implements IMessage<T> {
 
@@ -11,7 +13,7 @@ export class Message<T> implements IMessage<T> {
     private _body: any;
     private _stream: PassThrough;
 
-    constructor(private _queue: Queue, private _msg: ConsumeMessage) {
+    constructor(private _queue: Queue, private _msg: ConsumeMessage, private _exchange: Exchange) {
         if (_msg.properties.headers["x-reply-stream"]) {
             this._stream = new PassThrough();
 
@@ -38,7 +40,7 @@ export class Message<T> implements IMessage<T> {
         return this._msg.fields;
     }
 
-    public get properties():MessageProperties {
+    public get properties(): MessageProperties {
         return this._msg.properties;
     }
 
@@ -54,6 +56,10 @@ export class Message<T> implements IMessage<T> {
 
         this._isAcked = true;
 
+        this._ack();
+    }
+
+    private _ack() {
         this._queue.ack(this._msg)
     }
 
@@ -65,8 +71,43 @@ export class Message<T> implements IMessage<T> {
         if (this.isAcked) {
             return;
         }
+
         this._isAcked = true;
-        this._queue.nack(this._msg)
+
+        let retry = this._msg.properties?.headers["x-appolo-retry"] as IRetry;
+
+        if (!retry || !this._exchange) {
+            return this._nack();
+        }
+
+        let retryAttempt = retry.retryAttempt || 0;
+
+        retryAttempt++;
+
+        if (retryAttempt > retry.retires) {
+            return this._ack();
+        }
+
+        let delay = Time.calcBackOff(retryAttempt, retry) || 0;
+        let msg = this._msg;
+
+        this._exchange.publish({
+            body: msg.content,
+            type: msg.properties.type,
+            routingKey: msg.fields.routingKey,
+            expiration: msg.properties.expiration,
+            headers: msg.properties.headers,
+            delay: delay,
+            retry: {...retry, retryAttempt}
+        }).catch(() => this._nack())
+
+        this._ack();
+
+    }
+
+    private _nack() {
+
+        this._queue.nack(this._msg);
     }
 
     public reject(requeue?: boolean): void {
@@ -119,7 +160,7 @@ export class Message<T> implements IMessage<T> {
         return this._body;
     }
 
-    public set body(value:T) {
+    public set body(value: T) {
         this._body = value;
     }
 

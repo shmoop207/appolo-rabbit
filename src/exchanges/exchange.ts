@@ -1,5 +1,5 @@
 import amqplib = require('amqplib');
-import * as _ from "lodash";
+import {Objects} from "@appolo/utils";
 import {Guid} from "@appolo/utils";
 import {Options} from "amqplib";
 import {Serializers} from "../serializers/serializers";
@@ -44,7 +44,7 @@ export class Exchange {
             timestamp: Date.now(),
             messageId: msg.messageId || Guid.guid(),
             contentEncoding: "utf8",
-        } as Partial<Options.Publish>, _.omit(msg, ["body", "routingKey"]));
+        } as Partial<Options.Publish>, Objects.omit(msg, "body", "routingKey", "delay", "retry"));
 
         opts.contentType = this.serializers.getContentType(msg);
 
@@ -52,7 +52,27 @@ export class Exchange {
             opts.persistent = msg.persistent || this._options.persistent
         }
 
+        if (msg.retry) {
+            opts.headers["x-appolo-retry"] = msg.retry;
+        }
+
         let content = this.serializers.getSerializer(opts.contentType).serialize(msg.body);
+
+        if (msg.delay > 0) {
+            let queueName = `${msg.routingKey}_${Guid.guid()}`
+            await this._channel.assertQueue(queueName, {
+                deadLetterRoutingKey: msg.routingKey,
+                deadLetterExchange: this._options.name,
+                autoDelete: false,
+                durable: true,
+                messageTtl: msg.delay,
+                expires: msg.delay + 1000
+            })
+
+            this._channel.sendToQueue(queueName, content, opts);
+            return;
+
+        }
 
         let result = await this._channel.publish(this._options.name, msg.routingKey, content, opts);
 

@@ -2,13 +2,14 @@ import {Queue} from "../queues/queue";
 import {Message} from "../messages/message";
 import {Handler} from "./handler";
 import {ConsumeMessage} from "amqplib";
-import * as _ from "lodash";
 import {define, inject, singleton, init} from '@appolo/inject';
 import {Serializers} from "../serializers/serializers";
 import {EventsDispatcher} from "../events/eventsDispatcher";
 import {EventDispatcher} from "@appolo/events";
 import {IHandlerFn, IHandlerOptions} from "./IHandlerOptions";
 import {IOptions} from "../common/IOptions";
+import {Strings} from "@appolo/utils";
+import {Exchange} from "../exchanges/exchange";
 
 @define()
 @singleton()
@@ -35,7 +36,7 @@ export class Handlers {
 
         let otps: IHandlerOptions = options as IHandlerOptions;
 
-        if (_.isString(options)) {
+        if (Strings.isString(options)) {
             otps = {type: options, handler: handlerFn, queue: queueName || "*"}
         }
 
@@ -64,9 +65,9 @@ export class Handlers {
         this._events.un(key, fn);
     }
 
-    private _handleMessage(opts: { message: ConsumeMessage, queue: Queue }) {
+    private _handleMessage(opts: { message: ConsumeMessage, queue: Queue,exchange:Exchange }) {
 
-        let message = new Message(opts.queue, opts.message);
+        let message = new Message(opts.queue, opts.message,opts.exchange);
 
         try {
 

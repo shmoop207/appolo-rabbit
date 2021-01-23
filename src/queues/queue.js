@@ -45,7 +45,8 @@ let Queue = class Queue {
         return result;
     }
     _onMessage(message) {
-        this.eventsDispatcher.queueMessageEvent.fireEvent({ message, queue: this });
+        let exchange = this.topology.exchanges.get(message.fields.exchange);
+        this.eventsDispatcher.queueMessageEvent.fireEvent({ message, queue: this, exchange });
     }
     ack(msg) {
         this._channel.ack(msg);
@@ -81,6 +82,9 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     inject_1.inject()
 ], Queue.prototype, "serializers", void 0);
+tslib_1.__decorate([
+    inject_1.inject()
+], Queue.prototype, "topology", void 0);
 tslib_1.__decorate([
     inject_1.factoryMethod(channel_1.Channel)
 ], Queue.prototype, "createChanel", void 0);

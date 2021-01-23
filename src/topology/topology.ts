@@ -1,6 +1,5 @@
 import {IOptions} from "../common/IOptions";
 import {define, singleton, inject, init, factoryMethod} from '@appolo/inject';
-import * as _ from "lodash";
 import {
     Defaults,
 } from "../common/defaults";

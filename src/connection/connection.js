@@ -5,11 +5,11 @@ const tslib_1 = require("tslib");
 const inject_1 = require("@appolo/inject");
 const url = require("url");
 const amqplib_1 = require("amqplib");
-const _ = require("lodash");
+const utils_1 = require("@appolo/utils");
 const connectionsDefaults_1 = require("./connectionsDefaults");
 let Connection = class Connection {
     async createConnection() {
-        let connection = _.omit(this._options.connection, ["connectionString"]);
+        let connection = utils_1.Objects.omit(this._options.connection, "connectionString");
         if (this._options.connection.uri) {
             connection = Object.assign(this._parseUri(this._options.connection.uri), connection);
         }

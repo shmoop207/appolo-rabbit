@@ -8,7 +8,7 @@ import {
 import {define, inject, factoryMethod} from '@appolo/inject';
 import {Connection} from "../connection/connection";
 import {EventsDispatcher} from "../events/eventsDispatcher";
-import * as _ from "lodash";
+import {Objects} from "@appolo/utils";
 import {IExchangeOptions} from "../exchanges/IExchangeOptions";
 import {IChannelOptions} from "./IChannelOptions";
 
@@ -92,7 +92,7 @@ export class Channel {
     }
 
     public assertExchange(opts: IExchangeOptions): Promise<Replies.AssertExchange> {
-        return this._channel.assertExchange(opts.name, opts.type, _.omit(opts, ["name", "type"]));
+        return this._channel.assertExchange(opts.name, opts.type, Objects.omit(opts, "name", "type"));
     }
 
     public publish(exchange: string, routingKey: string, content: Buffer, options: Options.Publish & { confirm?: boolean }): Promise<void> {

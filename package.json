@@ -2,8 +2,7 @@
   "name": "appolo-rabbit",
   "description": "cache node dns module",
   "keywords": [
-    "rabbit",
-    "dns-cache"
+    "rabbit"
   ],
   "author": {
     "name": "Roman Svichar",
@@ -17,7 +16,7 @@
     "test": "mocha test --exit"
   },
   "main": "./index.js",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -29,9 +28,8 @@
     "@appolo/engine": "^8.0.19",
     "@appolo/events": "^8.0.2",
     "@appolo/inject": "^8.0.13",
-    "@appolo/utils": "^8.0.5",
-    "amqplib": "^0.6.0",
-    "lodash": "^4.17.20"
+    "@appolo/utils": "^8.0.9",
+    "amqplib": "^0.6.0"
   },
   "devDependencies": {
     "@types/amqplib": "^0.5.16",

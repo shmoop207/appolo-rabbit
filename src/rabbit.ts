@@ -1,6 +1,5 @@
 import {} from '@appolo/engine';
 import {define, inject, init} from '@appolo/inject';
-import * as _ from "lodash";
 import {Promises} from "@appolo/utils";
 import {Exchange} from "./exchanges/exchange";
 import {Queue} from "./queues/queue";

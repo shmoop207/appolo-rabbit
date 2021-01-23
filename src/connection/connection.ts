@@ -7,7 +7,7 @@ import {
     ConfirmChannel as AmqplibConfirmChannel,
     Channel as AmqplibChannel
 } from "amqplib";
-import * as _ from "lodash";
+import {Objects} from "@appolo/utils";
 import {IOptions} from "../common/IOptions";
 import {ConnectionsDefaults} from "./connectionsDefaults";
 import {EventsDispatcher} from "../events/eventsDispatcher";
@@ -26,7 +26,7 @@ export class Connection {
 
     public async createConnection(): Promise<void> {
 
-        let connection: Options.Connect = _.omit(this._options.connection, ["connectionString"]);
+        let connection: Options.Connect = Objects.omit(this._options.connection, "connectionString" as any);
 
         if (this._options.connection.uri) {
             connection = Object.assign(this._parseUri(this._options.connection.uri), connection);

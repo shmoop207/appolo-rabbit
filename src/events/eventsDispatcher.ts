@@ -5,12 +5,13 @@ import {Channel} from "../channel/channel";
 
 import {define, inject, singleton,override} from '@appolo/inject';
 import {Connection} from "../connection/connection";
+import {Exchange} from "../exchanges/exchange";
 
 @define()
 @singleton()
 @override()
 export class EventsDispatcher {
-    private _queueMessageEvent = new Event<{ message: ConsumeMessage, queue: Queue }>();
+    private _queueMessageEvent = new Event<{ message: ConsumeMessage, queue: Queue,exchange:Exchange }>();
     private _channelCloseEvent = new Event<{ channel: Channel }>();
     private _channelErrorEvent = new Event<{ channel: Channel, error: Error }>();
 

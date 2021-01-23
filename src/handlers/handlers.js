@@ -4,9 +4,9 @@ exports.Handlers = void 0;
 const tslib_1 = require("tslib");
 const message_1 = require("../messages/message");
 const handler_1 = require("./handler");
-const _ = require("lodash");
 const inject_1 = require("@appolo/inject");
 const events_1 = require("@appolo/events");
+const utils_1 = require("@appolo/utils");
 let Handlers = class Handlers {
     constructor() {
         this._events = new events_1.EventDispatcher();
@@ -19,7 +19,7 @@ let Handlers = class Handlers {
     }
     addHandler(options, handlerFn, queueName) {
         let otps = options;
-        if (_.isString(options)) {
+        if (utils_1.Strings.isString(options)) {
             otps = { type: options, handler: handlerFn, queue: queueName || "*" };
         }
         let handler = new handler_1.Handler(otps);
@@ -37,7 +37,7 @@ let Handlers = class Handlers {
         this._events.un(key, fn);
     }
     _handleMessage(opts) {
-        let message = new message_1.Message(opts.queue, opts.message);
+        let message = new message_1.Message(opts.queue, opts.message, opts.exchange);
         try {
             let key = `${message.queue}.${message.type}`;
             let hasHandler = this._events.hasListener(key);

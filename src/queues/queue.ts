@@ -1,5 +1,4 @@
 import amqplib = require('amqplib');
-import * as _ from "lodash";
 import {Guid, Promises} from "@appolo/utils";
 import {ConsumeMessage, Options} from "amqplib";
 import {Channel} from "../channel/channel";
@@ -10,6 +9,7 @@ import {define, inject, factoryMethod} from '@appolo/inject';
 import {IQueueOptions} from "./IQueueOptions";
 import {IChannelOptions} from "../channel/IChannelOptions";
 import {IPublishOptions} from "../exchanges/IPublishOptions";
+import {Topology} from "../topology/topology";
 
 @define()
 export class Queue {
@@ -18,6 +18,7 @@ export class Queue {
     private _isSubscribed: boolean;
     @inject() private eventsDispatcher: EventsDispatcher;
     @inject() private serializers: Serializers;
+    @inject() private topology: Topology;
     @factoryMethod(Channel) private createChanel: (opts: IChannelOptions) => Channel;
 
 
@@ -80,8 +81,8 @@ export class Queue {
     }
 
     private _onMessage(message: ConsumeMessage) {
-
-        this.eventsDispatcher.queueMessageEvent.fireEvent({message, queue: this});
+        let exchange = this.topology.exchanges.get(message.fields.exchange);
+        this.eventsDispatcher.queueMessageEvent.fireEvent({message, queue: this, exchange});
     }
 
     public ack(msg: ConsumeMessage) {
@@ -109,7 +110,7 @@ export class Queue {
 
         dto = Object.assign({}, options || {}, dto);
 
-        if(!dto.headers){
+        if (!dto.headers) {
             dto.headers = {}
         }
 

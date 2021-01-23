@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Channel = void 0;
 const tslib_1 = require("tslib");
 const inject_1 = require("@appolo/inject");
-const _ = require("lodash");
+const utils_1 = require("@appolo/utils");
 let Channel = class Channel {
     constructor(_options) {
         this._options = _options;
@@ -58,7 +58,7 @@ let Channel = class Channel {
         this._channel.sendToQueue(queue, content, options);
     }
     assertExchange(opts) {
-        return this._channel.assertExchange(opts.name, opts.type, _.omit(opts, ["name", "type"]));
+        return this._channel.assertExchange(opts.name, opts.type, utils_1.Objects.omit(opts, "name", "type"));
     }
     publish(exchange, routingKey, content, options) {
         if (options.confirm !== undefined ? options.confirm : this._options.confirm) {

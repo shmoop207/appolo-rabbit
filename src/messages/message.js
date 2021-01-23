@@ -3,10 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = void 0;
 const stream_1 = require("stream");
 const IPublishOptions_1 = require("../exchanges/IPublishOptions");
+const utils_1 = require("@appolo/utils");
 class Message {
-    constructor(_queue, _msg) {
+    constructor(_queue, _msg, _exchange) {
         this._queue = _queue;
         this._msg = _msg;
+        this._exchange = _exchange;
         this._isAcked = false;
         if (_msg.properties.headers["x-reply-stream"]) {
             this._stream = new stream_1.PassThrough();
@@ -38,16 +40,43 @@ class Message {
             return;
         }
         this._isAcked = true;
+        this._ack();
+    }
+    _ack() {
         this._queue.ack(this._msg);
     }
     get isAcked() {
         return this._queue.noAck || this._isAcked;
     }
     nack() {
+        var _a;
         if (this.isAcked) {
             return;
         }
         this._isAcked = true;
+        let retry = (_a = this._msg.properties) === null || _a === void 0 ? void 0 : _a.headers["x-appolo-retry"];
+        if (!retry || !this._exchange) {
+            return this._nack();
+        }
+        let retryAttempt = retry.retryAttempt || 0;
+        retryAttempt++;
+        if (retryAttempt > retry.retires) {
+            return this._ack();
+        }
+        let delay = utils_1.Time.calcBackOff(retryAttempt, retry) || 0;
+        let msg = this._msg;
+        this._exchange.publish({
+            body: msg.content,
+            type: msg.properties.type,
+            routingKey: msg.fields.routingKey,
+            expiration: msg.properties.expiration,
+            headers: msg.properties.headers,
+            delay: delay,
+            retry: Object.assign(Object.assign({}, retry), { retryAttempt })
+        }).catch(() => this._nack());
+        this._ack();
+    }
+    _nack() {
         this._queue.nack(this._msg);
     }
     reject(requeue) {

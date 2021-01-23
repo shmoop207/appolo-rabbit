@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Requests = void 0;
 const tslib_1 = require("tslib");
 const utils_1 = require("@appolo/utils");
-const _ = require("lodash");
+const utils_2 = require("@appolo/utils");
 const inject_1 = require("@appolo/inject");
 const stream_1 = require("stream");
 const requestError_1 = require("../errors/requestError");
@@ -78,7 +78,7 @@ let Requests = class Requests {
             request.deferred.resolve(msg.body.data);
         }
         else {
-            let errorMessage = _.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message;
+            let errorMessage = utils_2.Objects.isObject(msg.body.message) ? JSON.stringify(msg.body.message) : msg.body.message;
             let error = new requestError_1.RequestError(errorMessage, msg.body.data, msg);
             request.deferred.reject(error);
         }

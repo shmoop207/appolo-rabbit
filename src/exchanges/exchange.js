@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Exchange = void 0;
 const tslib_1 = require("tslib");
-const _ = require("lodash");
 const utils_1 = require("@appolo/utils");
+const utils_2 = require("@appolo/utils");
 const inject_1 = require("@appolo/inject");
 const channel_1 = require("../channel/channel");
 let Exchange = class Exchange {
@@ -22,14 +22,30 @@ let Exchange = class Exchange {
         let opts = Object.assign({
             headers: {},
             timestamp: Date.now(),
-            messageId: msg.messageId || utils_1.Guid.guid(),
+            messageId: msg.messageId || utils_2.Guid.guid(),
             contentEncoding: "utf8",
-        }, _.omit(msg, ["body", "routingKey"]));
+        }, utils_1.Objects.omit(msg, "body", "routingKey", "delay", "retry"));
         opts.contentType = this.serializers.getContentType(msg);
         if (msg.persistent !== undefined ? msg.persistent : this._options.persistent) {
             opts.persistent = msg.persistent || this._options.persistent;
         }
+        if (msg.retry) {
+            opts.headers["x-appolo-retry"] = msg.retry;
+        }
         let content = this.serializers.getSerializer(opts.contentType).serialize(msg.body);
+        if (msg.delay > 0) {
+            let queueName = `${msg.routingKey}_${utils_2.Guid.guid()}`;
+            await this._channel.assertQueue(queueName, {
+                deadLetterRoutingKey: msg.routingKey,
+                deadLetterExchange: this._options.name,
+                autoDelete: false,
+                durable: true,
+                messageTtl: msg.delay,
+                expires: msg.delay + 1000
+            });
+            this._channel.sendToQueue(queueName, content, opts);
+            return;
+        }
         let result = await this._channel.publish(this._options.name, msg.routingKey, content, opts);
         return result;
     }

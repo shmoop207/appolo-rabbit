@@ -114,5 +114,36 @@ describe("bus module Spec", function () {
         }
         sum.should.be.eq(5);
     });
+    it("should delay", async () => {
+        let expiredHeader = "";
+        rabbit.handle("aa.bb.cc", (msg) => {
+            expiredHeader = msg.properties.headers["x-first-death-reason"];
+            msg.ack();
+        });
+        await rabbit.connect();
+        await rabbit.subscribe();
+        await rabbit.publish("test", {
+            routingKey: "aa.bb.cc",
+            delay: 2 * 1000,
+            body: { counter: 1 }
+        });
+        await utils_1.Promises.delay(5000);
+        expiredHeader.should.be.eq("expired");
+    });
+    it("should retry", async () => {
+        let counter = 0;
+        rabbit.handle("aa.bb.cc", (msg) => {
+            counter++;
+            msg.nack();
+        });
+        await rabbit.connect();
+        await rabbit.subscribe();
+        await rabbit.publish("test", {
+            routingKey: "aa.bb.cc",
+            body: { counter: 1 }, retry: { retires: 2, linear: 100 }
+        });
+        await utils_1.Promises.delay(5000);
+        counter.should.be.eq(3);
+    });
 });
 //# sourceMappingURL=spec.js.map

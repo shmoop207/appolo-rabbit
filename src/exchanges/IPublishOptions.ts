@@ -1,5 +1,5 @@
 export interface IPublishOptions {
-    expiration?:  number;
+    expiration?: number;
     userId?: string;
     CC?: string | string[];
 
@@ -21,12 +21,23 @@ export interface IPublishOptions {
     body: any;
     routingKey?: string
     confirm?: boolean;
+    delay?: number
+    retry?: IRetry
+}
+
+export interface IRetry {
+    retires: number,
+    max?: number,
+    random?: number,
+    min?: number,
+    linear?: number,
+    exponential?: number
+    retryAttempt?: number
 }
 
 export interface IRequestOptions extends IPublishOptions {
     replyTimeout?: number
 }
-
 
 
 export enum StreamStatus {
