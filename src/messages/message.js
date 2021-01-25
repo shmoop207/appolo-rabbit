@@ -35,6 +35,9 @@ class Message {
     get content() {
         return this._msg.content;
     }
+    set retry(value) {
+        this._retry = value;
+    }
     ack() {
         if (this.isAcked) {
             return;
@@ -54,7 +57,7 @@ class Message {
             return;
         }
         this._isAcked = true;
-        let retry = (_a = this._msg.properties) === null || _a === void 0 ? void 0 : _a.headers["x-appolo-retry"];
+        let retry = this._retry || ((_a = this._msg.properties) === null || _a === void 0 ? void 0 : _a.headers["x-appolo-retry"]);
         if (!retry || !this._exchange) {
             return this._nack();
         }

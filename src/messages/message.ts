@@ -12,6 +12,7 @@ export class Message<T> implements IMessage<T> {
     private _isAcked: boolean = false;
     private _body: any;
     private _stream: PassThrough;
+    private _retry: IRetry;
 
     constructor(private _queue: Queue, private _msg: ConsumeMessage, private _exchange: Exchange) {
         if (_msg.properties.headers["x-reply-stream"]) {
@@ -48,6 +49,10 @@ export class Message<T> implements IMessage<T> {
         return this._msg.content;
     }
 
+    public set retry(value: IRetry) {
+        this._retry = value;
+    }
+
     public ack(): void {
 
         if (this.isAcked) {
@@ -74,7 +79,7 @@ export class Message<T> implements IMessage<T> {
 
         this._isAcked = true;
 
-        let retry = this._msg.properties?.headers["x-appolo-retry"] as IRetry;
+        let retry = this._retry || this._msg.properties?.headers["x-appolo-retry"] as IRetry;
 
         if (!retry || !this._exchange) {
             return this._nack();
