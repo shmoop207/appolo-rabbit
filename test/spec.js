@@ -130,7 +130,7 @@ describe("bus module Spec", function () {
         await utils_1.Promises.delay(5000);
         expiredHeader.should.be.eq("expired");
     });
-    it("should retry", async () => {
+    it.only("should retry", async () => {
         let counter = 0;
         rabbit.handle("aa.bb.cc", (msg) => {
             counter++;

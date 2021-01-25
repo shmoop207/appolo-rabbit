@@ -79,7 +79,7 @@ export class Message<T> implements IMessage<T> {
 
         this._isAcked = true;
 
-        let retry = this._retry || this._msg.properties?.headers["x-appolo-retry"] as IRetry;
+        let retry =  this._msg.properties?.headers["x-appolo-retry"] as IRetry || this._retry;
 
         if (!retry || !this._exchange) {
             return this._nack();
@@ -94,14 +94,13 @@ export class Message<T> implements IMessage<T> {
         }
 
         let delay = Time.calcBackOff(retryAttempt, retry) || 0;
-        let msg = this._msg;
 
         this._exchange.publish({
-            body: msg.content,
-            type: msg.properties.type,
-            routingKey: msg.fields.routingKey,
-            expiration: msg.properties.expiration,
-            headers: msg.properties.headers,
+            body: this.body,
+            type: this.properties.type,
+            routingKey: this.fields.routingKey,
+            expiration: this.properties.expiration,
+            headers: this.properties.headers,
             delay: delay,
             retry: {...retry, retryAttempt}
         }).catch(() => this._nack())

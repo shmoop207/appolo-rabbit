@@ -177,7 +177,7 @@ describe("bus module Spec", function () {
 
     });
 
-    it("should retry", async () => {
+    it.only("should retry", async () => {
 
         let counter = 0 ;
 

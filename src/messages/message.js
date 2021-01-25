@@ -57,7 +57,7 @@ class Message {
             return;
         }
         this._isAcked = true;
-        let retry = this._retry || ((_a = this._msg.properties) === null || _a === void 0 ? void 0 : _a.headers["x-appolo-retry"]);
+        let retry = ((_a = this._msg.properties) === null || _a === void 0 ? void 0 : _a.headers["x-appolo-retry"]) || this._retry;
         if (!retry || !this._exchange) {
             return this._nack();
         }
@@ -67,13 +67,12 @@ class Message {
             return this._ack();
         }
         let delay = utils_1.Time.calcBackOff(retryAttempt, retry) || 0;
-        let msg = this._msg;
         this._exchange.publish({
-            body: msg.content,
-            type: msg.properties.type,
-            routingKey: msg.fields.routingKey,
-            expiration: msg.properties.expiration,
-            headers: msg.properties.headers,
+            body: this.body,
+            type: this.properties.type,
+            routingKey: this.fields.routingKey,
+            expiration: this.properties.expiration,
+            headers: this.properties.headers,
             delay: delay,
             retry: Object.assign(Object.assign({}, retry), { retryAttempt })
         }).catch(() => this._nack());
