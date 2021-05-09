@@ -16,7 +16,7 @@
     "test": "mocha test --exit"
   },
   "main": "./index.js",
-  "version": "8.0.4",
+  "version": "8.0.5",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "@appolo/events": "^8.0.2",
     "@appolo/inject": "^8.0.13",
     "@appolo/utils": "^8.0.9",
-    "amqplib": "^0.6.0"
+    "amqplib": "^0.7.1"
   },
   "devDependencies": {
     "@types/amqplib": "^0.5.16",
