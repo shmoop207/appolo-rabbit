@@ -24,11 +24,11 @@ let Serializers = class Serializers {
     }
 };
 tslib_1.__decorate([
-    inject_1.alias("ISerializer", "contentType")
+    (0, inject_1.alias)("ISerializer", "contentType")
 ], Serializers.prototype, "_serializes", void 0);
 Serializers = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton()
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)()
 ], Serializers);
 exports.Serializers = Serializers;
 //# sourceMappingURL=serializers.js.map

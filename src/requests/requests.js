@@ -33,8 +33,15 @@ let Requests = class Requests {
             throw new Error(`reply queue not defined`);
         }
         let correlationId = utils_1.Guid.guid();
-        let headers = Object.assign(Object.assign({}, msg.headers), { "x-reply-stream": true });
-        let dto = Object.assign(Object.assign({}, msg), { correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
+        let headers = { ...msg.headers, "x-reply-stream": true };
+        let dto = {
+            ...msg,
+            correlationId,
+            replyTo: this.topology.replyQueue.name,
+            confirm: false, persistent: false,
+            replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout,
+            headers
+        };
         let timeout = null;
         if (dto.replyTimeout) {
             timeout = setTimeout(() => this._onTimeout(correlationId), dto.replyTimeout);
@@ -48,8 +55,17 @@ let Requests = class Requests {
             throw new Error(`reply queue not defined`);
         }
         let correlationId = utils_1.Guid.guid();
-        let headers = Object.assign(Object.assign({}, msg.headers), { "x-reply": true });
-        let dto = Object.assign(Object.assign({}, msg), { messageId: correlationId, correlationId, replyTo: this.topology.replyQueue.name, confirm: false, persistent: false, replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout, headers });
+        let headers = { ...msg.headers, "x-reply": true };
+        let dto = {
+            ...msg,
+            messageId: correlationId,
+            correlationId,
+            replyTo: this.topology.replyQueue.name,
+            confirm: false,
+            persistent: false,
+            replyTimeout: msg.replyTimeout || this.topology.options.replyTimeout,
+            headers
+        };
         let deferred = utils_1.Promises.defer();
         let timeout = null;
         if (dto.replyTimeout) {
@@ -133,14 +149,14 @@ let Requests = class Requests {
     }
 };
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Requests.prototype, "topology", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Requests.prototype, "handlers", void 0);
 Requests = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton()
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)()
 ], Requests);
 exports.Requests = Requests;
 //# sourceMappingURL=requests.js.map

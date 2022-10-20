@@ -82,25 +82,25 @@ let Rabbit = class Rabbit extends events_1.EventDispatcher {
     }
 };
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Rabbit.prototype, "topology", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Rabbit.prototype, "handlers", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Rabbit.prototype, "requests", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Rabbit.prototype, "connection", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Rabbit.prototype, "eventsDispatcher", void 0);
 tslib_1.__decorate([
-    inject_1.init()
+    (0, inject_1.init)()
 ], Rabbit.prototype, "_initialize", null);
 Rabbit = tslib_1.__decorate([
-    inject_1.define()
+    (0, inject_1.define)()
 ], Rabbit);
 exports.Rabbit = Rabbit;
 //# sourceMappingURL=rabbit.js.map

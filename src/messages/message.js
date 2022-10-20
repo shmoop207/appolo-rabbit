@@ -74,7 +74,7 @@ class Message {
             expiration: this.properties.expiration,
             headers: this.properties.headers,
             delay: delay,
-            retry: Object.assign(Object.assign({}, retry), { retryAttempt })
+            retry: { ...retry, retryAttempt }
         }).catch(() => this._nack());
         this._ack();
     }

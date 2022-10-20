@@ -16,7 +16,7 @@
     "test": "mocha test --exit"
   },
   "main": "./index.js",
-  "version": "8.0.5",
+  "version": "8.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -25,25 +25,24 @@
   "readme": "",
   "readmeFilename": "README.md",
   "dependencies": {
-    "@appolo/engine": "^8.0.19",
+    "@appolo/engine": "^8.0.23",
     "@appolo/events": "^8.0.2",
-    "@appolo/inject": "^8.0.13",
-    "@appolo/utils": "^8.0.9",
-    "amqplib": "^0.7.1"
+    "@appolo/inject": "^8.0.18",
+    "@appolo/utils": "^8.0.38",
+    "amqplib": "^0.10.3"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.5.16",
-    "@types/chai": "^4.2.14",
-    "@types/lodash": "^4.14.165",
-    "@types/mocha": "^8.2.0",
-    "@types/node": "^14.14.11",
-    "@types/sinon": "^9.0.9",
-    "@types/sinon-chai": "^3.2.5",
-    "chai": "^4.2.0",
-    "mocha": "^8.2.1",
-    "sinon": "^9.2.1",
-    "sinon-chai": "^3.5.0",
-    "tslib": "^2.0.3",
-    "typescript": "^4.1.2"
+    "@types/amqplib": "^0.8.2",
+    "@types/chai": "^4.3.3",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.2",
+    "@types/sinon": "^10.0.13",
+    "@types/sinon-chai": "^3.2.8",
+    "chai": "^4.3.6",
+    "mocha": "^10.1.0",
+    "sinon": "^14.0.1",
+    "sinon-chai": "^3.7.0",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.4"
   }
 }

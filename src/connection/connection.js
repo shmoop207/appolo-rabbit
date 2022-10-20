@@ -14,7 +14,7 @@ let Connection = class Connection {
             connection = Object.assign(this._parseUri(this._options.connection.uri), connection);
         }
         connection = Object.assign({}, connectionsDefaults_1.ConnectionsDefaults, connection);
-        this._connection = await amqplib_1.connect(connection);
+        this._connection = await (0, amqplib_1.connect)(connection);
         this._connection.on('close', () => this._onConnectionClose());
         this._connection.on('error', (e) => this._onConnectionError(e));
         this.eventsDispatcher.channelErrorEvent.on(this._onChannelError, this);
@@ -71,14 +71,14 @@ let Connection = class Connection {
     }
 };
 tslib_1.__decorate([
-    inject_1.inject("options")
+    (0, inject_1.inject)("options")
 ], Connection.prototype, "_options", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Connection.prototype, "eventsDispatcher", void 0);
 Connection = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton()
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)()
 ], Connection);
 exports.Connection = Connection;
 //# sourceMappingURL=connection.js.map

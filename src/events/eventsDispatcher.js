@@ -33,9 +33,9 @@ let EventsDispatcher = class EventsDispatcher {
     }
 };
 EventsDispatcher = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton(),
-    inject_1.override()
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)(),
+    (0, inject_1.override)()
 ], EventsDispatcher);
 exports.EventsDispatcher = EventsDispatcher;
 //# sourceMappingURL=eventsDispatcher.js.map

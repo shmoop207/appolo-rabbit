@@ -85,20 +85,20 @@ let Topology = class Topology {
     }
 };
 tslib_1.__decorate([
-    inject_1.inject("options")
+    (0, inject_1.inject)("options")
 ], Topology.prototype, "_options", void 0);
 tslib_1.__decorate([
-    inject_1.factoryMethod(exchange_1.Exchange)
+    (0, inject_1.factoryMethod)(exchange_1.Exchange)
 ], Topology.prototype, "createExchange", void 0);
 tslib_1.__decorate([
-    inject_1.factoryMethod(queue_1.Queue)
+    (0, inject_1.factoryMethod)(queue_1.Queue)
 ], Topology.prototype, "createQueue", void 0);
 tslib_1.__decorate([
-    inject_1.init()
+    (0, inject_1.init)()
 ], Topology.prototype, "initialize", null);
 Topology = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton()
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)()
 ], Topology);
 exports.Topology = Topology;
 //# sourceMappingURL=topology.js.map

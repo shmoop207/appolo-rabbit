@@ -83,20 +83,20 @@ let Handlers = class Handlers {
     }
 };
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Handlers.prototype, "eventsDispatcher", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Handlers.prototype, "serializers", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Handlers.prototype, "options", void 0);
 tslib_1.__decorate([
-    inject_1.init()
+    (0, inject_1.init)()
 ], Handlers.prototype, "initialize", null);
 Handlers = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton()
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)()
 ], Handlers);
 exports.Handlers = Handlers;
 //# sourceMappingURL=handlers.js.map

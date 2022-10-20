@@ -77,19 +77,19 @@ let Queue = class Queue {
     }
 };
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Queue.prototype, "eventsDispatcher", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Queue.prototype, "serializers", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Queue.prototype, "topology", void 0);
 tslib_1.__decorate([
-    inject_1.factoryMethod(channel_1.Channel)
+    (0, inject_1.factoryMethod)(channel_1.Channel)
 ], Queue.prototype, "createChanel", void 0);
 Queue = tslib_1.__decorate([
-    inject_1.define()
+    (0, inject_1.define)()
 ], Queue);
 exports.Queue = Queue;
 //# sourceMappingURL=queue.js.map

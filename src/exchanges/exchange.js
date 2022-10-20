@@ -51,16 +51,16 @@ let Exchange = class Exchange {
     }
 };
 tslib_1.__decorate([
-    inject_1.factoryMethod(channel_1.Channel)
+    (0, inject_1.factoryMethod)(channel_1.Channel)
 ], Exchange.prototype, "createChanel", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Exchange.prototype, "serializers", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Exchange.prototype, "connection", void 0);
 Exchange = tslib_1.__decorate([
-    inject_1.define()
+    (0, inject_1.define)()
 ], Exchange);
 exports.Exchange = Exchange;
 //# sourceMappingURL=exchange.js.map

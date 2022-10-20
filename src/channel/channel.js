@@ -84,13 +84,13 @@ let Channel = class Channel {
     }
 };
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Channel.prototype, "connection", void 0);
 tslib_1.__decorate([
-    inject_1.inject()
+    (0, inject_1.inject)()
 ], Channel.prototype, "eventsDispatcher", void 0);
 Channel = tslib_1.__decorate([
-    inject_1.define()
+    (0, inject_1.define)()
 ], Channel);
 exports.Channel = Channel;
 //# sourceMappingURL=channel.js.map

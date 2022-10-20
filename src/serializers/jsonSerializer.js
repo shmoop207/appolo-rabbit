@@ -18,9 +18,9 @@ let JsonSerializer = class JsonSerializer {
     }
 };
 JsonSerializer = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton(),
-    inject_1.alias("ISerializer")
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)(),
+    (0, inject_1.alias)("ISerializer")
 ], JsonSerializer);
 exports.JsonSerializer = JsonSerializer;
 //# sourceMappingURL=jsonSerializer.js.map

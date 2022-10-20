@@ -1,6 +1,6 @@
 import chai = require('chai');
 import sinon = require('sinon');
-import    sinonChai = require("sinon-chai");
+import sinonChai = require("sinon-chai");
 import {createRabbit, Message, Rabbit} from "../index";
 import {Promises} from "@appolo/utils";
 import {RequestError} from "../src/errors/requestError";
@@ -154,10 +154,10 @@ describe("bus module Spec", function () {
 
     it("should delay", async () => {
 
-        let expiredHeader = "";
+        let expiredHeader: any = "";
 
         rabbit.handle("aa.bb.cc", (msg: Message<{ counter: number }>) => {
-            expiredHeader = msg.properties.headers["x-first-death-reason"];
+            expiredHeader = msg.properties.headers["x-death"] as any;
             msg.ack();
         })
 
@@ -177,9 +177,9 @@ describe("bus module Spec", function () {
 
     });
 
-    it.only("should retry", async () => {
+    it("should retry", async () => {
 
-        let counter = 0 ;
+        let counter = 0;
 
         rabbit.handle("aa.bb.cc", (msg: Message<{ counter: number }>) => {
             counter++;
@@ -192,7 +192,7 @@ describe("bus module Spec", function () {
 
         await rabbit.publish("test", {
             routingKey: "aa.bb.cc",
-            body: {counter: 1}, retry: {retires: 2,linear:100}
+            body: {counter: 1}, retry: {retires: 2, linear: 100}
         });
 
         await Promises.delay(5000)

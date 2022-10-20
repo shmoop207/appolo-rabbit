@@ -10,7 +10,7 @@ Object.defineProperty(exports, "Handler", { enumerable: true, get: function () {
 const engine_1 = require("@appolo/engine");
 const defaults_1 = require("./src/common/defaults");
 async function createRabbit(options) {
-    let app = engine_1.createApp({ root: __dirname });
+    let app = (0, engine_1.createApp)({ root: __dirname });
     app.injector.addObject("options", Object.assign({}, defaults_1.Defaults, options));
     await app.launch();
     let rabbit = app.injector.get(rabbit_1.Rabbit, [options]);
