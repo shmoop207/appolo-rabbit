@@ -10,6 +10,7 @@ import {QueueMessageModel, QueueModel} from "./src/api/models/queueModel";
 import {IRequestOptions, IPublishOptions, IRetry} from "./src/exchanges/IPublishOptions";
 import {App, createApp} from '@appolo/engine';
 import {Defaults} from "./src/common/defaults";
+import {RabbitApi} from "./src/api/rabbitApi";
 
 export {
     IRetry,
@@ -22,7 +23,7 @@ export {
     Handler,
     IRequestOptions,
     IPublishOptions,
-    IMessage, IBindingOptions, IConnectionParams, QueueMessageModel, QueueModel
+    IMessage, IBindingOptions, IConnectionParams, QueueMessageModel, QueueModel,RabbitApi
 }
 
 export async function createRabbit(options: IOptions) {
