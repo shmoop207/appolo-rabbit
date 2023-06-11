@@ -14,6 +14,7 @@ let Connection = class Connection {
             connection = Object.assign(this._parseUri(this._options.connection.uri), connection);
         }
         connection = Object.assign({}, connectionsDefaults_1.ConnectionsDefaults, connection);
+        this._connectionParams = connection;
         this._connection = await (0, amqplib_1.connect)(connection);
         this._connection.on('close', () => this._onConnectionClose());
         this._connection.on('error', (e) => this._onConnectionError(e));
@@ -68,6 +69,9 @@ let Connection = class Connection {
     async close() {
         await this._connection.close();
         this._clear();
+    }
+    get connectionParams() {
+        return this._connectionParams;
     }
 };
 tslib_1.__decorate([

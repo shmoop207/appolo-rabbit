@@ -20,3 +20,12 @@ export interface IConnectionOptions {
 
     vhost?: string;
 }
+
+
+export interface IConnectionParams {
+    username: string,
+    password: string,
+    hostname: string,
+    port: number,
+    vhost: string
+}

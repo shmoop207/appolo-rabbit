@@ -80,6 +80,12 @@ let Rabbit = class Rabbit extends events_1.EventDispatcher {
         await this.connect();
         await this.subscribe();
     }
+    get api() {
+        return this.rabbitApi;
+    }
+    get connectionParams() {
+        return this.connection.connectionParams;
+    }
 };
 tslib_1.__decorate([
     (0, inject_1.inject)()
@@ -96,6 +102,9 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     (0, inject_1.inject)()
 ], Rabbit.prototype, "eventsDispatcher", void 0);
+tslib_1.__decorate([
+    (0, inject_1.inject)()
+], Rabbit.prototype, "rabbitApi", void 0);
 tslib_1.__decorate([
     (0, inject_1.init)()
 ], Rabbit.prototype, "_initialize", null);

@@ -12,6 +12,7 @@ import {IOptions} from "../common/IOptions";
 import {ConnectionsDefaults} from "./connectionsDefaults";
 import {EventsDispatcher} from "../events/eventsDispatcher";
 import {Channel} from "../channel/channel";
+import {IConnectionParams} from "./IConnectionOptions";
 
 @define()
 @singleton()
@@ -23,6 +24,7 @@ export class Connection {
 
     private _isConnected: boolean;
 
+    private _connectionParams: IConnectionParams
 
     public async createConnection(): Promise<void> {
 
@@ -33,6 +35,8 @@ export class Connection {
         }
 
         connection = Object.assign({}, ConnectionsDefaults, connection);
+
+        this._connectionParams = connection as IConnectionParams
 
         this._connection = await connect(connection);
 
@@ -53,7 +57,7 @@ export class Connection {
         return this._isConnected;
     }
 
-    private _parseUri(uri: string) {
+    private _parseUri(uri: string): IConnectionParams {
         let amqp = url.parse(uri);
         return {
             username: amqp.auth.split(":")[0],
@@ -113,4 +117,10 @@ export class Connection {
 
 
     }
+
+    public get connectionParams(): IConnectionParams {
+        return this._connectionParams;
+    }
+
+
 }

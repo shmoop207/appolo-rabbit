@@ -54,22 +54,22 @@ let Channel = class Channel {
     _isValidConsumerTag(message) {
         return !this._consumerTag || message.fields.consumerTag == this._consumerTag;
     }
-    sendToQueue(queue, content, options) {
+    async sendToQueue(queue, content, options) {
+        if (options.confirm !== undefined ? options.confirm : this._options.confirm) {
+            await utils_1.Promises.fromCallback(c => this._channel.sendToQueue(queue, content, options, c));
+            return;
+        }
         this._channel.sendToQueue(queue, content, options);
     }
     assertExchange(opts) {
         return this._channel.assertExchange(opts.name, opts.type, utils_1.Objects.omit(opts, "name", "type"));
     }
-    publish(exchange, routingKey, content, options) {
+    async publish(exchange, routingKey, content, options) {
         if (options.confirm !== undefined ? options.confirm : this._options.confirm) {
-            return new Promise((resolve, reject) => {
-                this._channel.publish(exchange, routingKey, content, options, (err, ok) => {
-                    err ? reject(err) : resolve();
-                });
-            });
+            await utils_1.Promises.fromCallback(c => this._channel.publish(exchange, routingKey, content, options, c));
+            return;
         }
         this._channel.publish(exchange, routingKey, content, options);
-        return Promise.resolve();
     }
     _onChannelClose() {
         this.eventsDispatcher.channelCloseEvent.fireEvent({ channel: this });

@@ -4,9 +4,10 @@ import {IMessage} from "./src/messages/IMessage"
 import {IOptions} from "./src/common/IOptions";
 import {IQueueOptions, IBindingOptions} from "./src/queues/IQueueOptions";
 import {IExchangeOptions} from "./src/exchanges/IExchangeOptions";
-import {IConnectionOptions} from "./src/connection/IConnectionOptions";
+import {IConnectionOptions, IConnectionParams} from "./src/connection/IConnectionOptions";
 import {Handler} from "./src/handlers/handler";
-import {IRequestOptions, IPublishOptions,IRetry} from "./src/exchanges/IPublishOptions";
+import {QueueMessageModel, QueueModel} from "./src/api/models/queueModel";
+import {IRequestOptions, IPublishOptions, IRetry} from "./src/exchanges/IPublishOptions";
 import {App, createApp} from '@appolo/engine';
 import {Defaults} from "./src/common/defaults";
 
@@ -21,7 +22,7 @@ export {
     Handler,
     IRequestOptions,
     IPublishOptions,
-    IMessage, IBindingOptions
+    IMessage, IBindingOptions, IConnectionParams, QueueMessageModel, QueueModel
 }
 
 export async function createRabbit(options: IOptions) {

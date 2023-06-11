@@ -8,7 +8,7 @@ import {
 import {define, inject, factoryMethod} from '@appolo/inject';
 import {Connection} from "../connection/connection";
 import {EventsDispatcher} from "../events/eventsDispatcher";
-import {Objects} from "@appolo/utils";
+import {Objects, Promises} from "@appolo/utils";
 import {IExchangeOptions} from "../exchanges/IExchangeOptions";
 import {IChannelOptions} from "./IChannelOptions";
 
@@ -87,27 +87,33 @@ export class Channel {
         return !this._consumerTag || message.fields.consumerTag == this._consumerTag;
     }
 
-    public sendToQueue(queue: string, content: Buffer, options?: Options.Publish) {
-        this._channel.sendToQueue(queue, content, options)
+    public async sendToQueue(queue: string, content: Buffer, options?: Options.Publish & {
+        confirm?: boolean
+    }): Promise<void> {
+
+        if (options.confirm !== undefined ? options.confirm : this._options.confirm) {
+            await Promises.fromCallback<any>(c => this._channel.sendToQueue(queue, content, options, c))
+            return;
+        }
+
+        this._channel.sendToQueue(queue, content, options);
     }
 
     public assertExchange(opts: IExchangeOptions): Promise<Replies.AssertExchange> {
         return this._channel.assertExchange(opts.name, opts.type, Objects.omit(opts, "name", "type"));
     }
 
-    public publish(exchange: string, routingKey: string, content: Buffer, options: Options.Publish & { confirm?: boolean }): Promise<void> {
+    public async publish(exchange: string, routingKey: string, content: Buffer, options: Options.Publish & {
+        confirm?: boolean
+    }): Promise<void> {
 
         if (options.confirm !== undefined ? options.confirm : this._options.confirm) {
-            return new Promise<void>((resolve, reject) => {
-                this._channel.publish(exchange, routingKey, content, options, (err, ok) =>{
-                    err ? reject(err) : resolve()
-                })
-            })
+            await Promises.fromCallback(c => this._channel.publish(exchange, routingKey, content, options, c))
+            return;
         }
 
         this._channel.publish(exchange, routingKey, content, options);
 
-        return Promise.resolve();
     }
 
     private _onChannelClose() {

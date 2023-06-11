@@ -15,6 +15,7 @@ import {IHandlerFn, IHandlerOptions} from "./handlers/IHandlerOptions";
 import {IPublishOptions, IRequestOptions} from "./exchanges/IPublishOptions";
 import {EventDispatcher} from "@appolo/events";
 import {IBindingOptions} from "./queues/IQueueOptions";
+import {RabbitApi} from "./api/rabbitApi";
 
 @define()
 export class Rabbit extends EventDispatcher {
@@ -24,6 +25,7 @@ export class Rabbit extends EventDispatcher {
     @inject() private requests: Requests;
     @inject() private connection: Connection;
     @inject() private eventsDispatcher: EventsDispatcher;
+    @inject() private rabbitApi: RabbitApi;
 
     @init()
     private _initialize() {
@@ -40,7 +42,7 @@ export class Rabbit extends EventDispatcher {
         this.requests.initialize();
     }
 
-    public bind(item: IBindingOptions):Promise<void>{
+    public bind(item: IBindingOptions): Promise<void> {
         return this.topology.bindKey(item)
     }
 
@@ -55,7 +57,7 @@ export class Rabbit extends EventDispatcher {
         await exchange.publish(msg);
     }
 
-    public  request<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<T> {
+    public request<T, K = any>(exchangeName: string, msg: IRequestOptions): Promise<T> {
 
         let exchange = this._getExchange(exchangeName);
 
@@ -136,5 +138,12 @@ export class Rabbit extends EventDispatcher {
         await this.subscribe();
     }
 
+    public get api(): RabbitApi {
+        return this.rabbitApi
+    }
+
+    public get connectionParams() {
+        return this.connection.connectionParams
+    }
 
 }

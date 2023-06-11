@@ -22,6 +22,9 @@ export interface IPublishOptions {
     routingKey?: string
     confirm?: boolean;
     delay?: number
+    debounce?: number
+    throttle?: number
+    deduplicationId?: string
     retry?: IRetry
 }
 

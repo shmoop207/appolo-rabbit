@@ -116,7 +116,7 @@ describe("bus module Spec", function () {
             body: { counter: 1 }
         });
         await utils_1.Promises.delay(5000);
-        expiredHeader.should.be.eq("expired");
+        expiredHeader[0].reason.should.be.eq("expired");
     });
     it("should retry", async () => {
         let counter = 0;
@@ -132,6 +132,46 @@ describe("bus module Spec", function () {
         });
         await utils_1.Promises.delay(5000);
         counter.should.be.eq(3);
+    });
+    it("should get queue with api", async () => {
+        await rabbit.connect();
+        await rabbit.subscribe();
+        let queue = await rabbit.api.getQueue({ name: "test" });
+        queue.should.be.ok;
+        queue.name.should.be.eq("test");
+    });
+    it("should exists queue with api", async () => {
+        await rabbit.connect();
+        await rabbit.subscribe();
+        let bool = await rabbit.api.hasQueue({ name: "test" });
+        bool.should.be.ok;
+    });
+    it("should throttle", async () => {
+        let counter = 0;
+        rabbit.handle("aa.bb.cc", (msg) => {
+            counter++;
+            msg.ack();
+        });
+        await rabbit.connect();
+        await rabbit.subscribe();
+        await rabbit.publish("test", {
+            routingKey: "aa.bb.cc",
+            body: { counter: 1 }, throttle: 5000, deduplicationId: "aaaaa"
+        });
+        //await Promises.delay(5000)
+        await rabbit.publish("test", {
+            routingKey: "aa.bb.cc",
+            body: { counter: 1 }, throttle: 5000, deduplicationId: "aaaaa",
+        });
+        await utils_1.Promises.delay(5000);
+        counter.should.be.eq(1);
+    });
+    it("should exists delete queue", async () => {
+        await rabbit.connect();
+        await rabbit.subscribe();
+        await rabbit.api.deleteQueue({ name: "test" });
+        let bool = await rabbit.api.hasQueue({ name: "test" });
+        bool.should.not.be.ok;
     });
 });
 //# sourceMappingURL=spec.js.map
