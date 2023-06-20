@@ -31,7 +31,7 @@ export class Connection {
         let connection: Options.Connect = Objects.omit(this._options.connection, "connectionString" as any);
 
         if (this._options.connection.uri) {
-            connection = Object.assign(this._parseUri(this._options.connection.uri), connection);
+            connection = Object.assign(this.parseUri(this._options.connection.uri), connection);
         }
 
         connection = Object.assign({}, ConnectionsDefaults, connection);
@@ -57,14 +57,14 @@ export class Connection {
         return this._isConnected;
     }
 
-    private _parseUri(uri: string): IConnectionParams {
+    public parseUri(uri: string): IConnectionParams {
         let amqp = url.parse(uri);
         return {
             username: amqp.auth.split(":")[0],
             password: amqp.auth.split(":")[1],
             hostname: amqp.hostname,
             port: parseInt(amqp.port) || 5672,
-            vhost: amqp.path.substr(1),
+            vhost: amqp.path.substring(1),
         }
     }
 

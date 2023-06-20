@@ -11,7 +11,7 @@ let Connection = class Connection {
     async createConnection() {
         let connection = utils_1.Objects.omit(this._options.connection, "connectionString");
         if (this._options.connection.uri) {
-            connection = Object.assign(this._parseUri(this._options.connection.uri), connection);
+            connection = Object.assign(this.parseUri(this._options.connection.uri), connection);
         }
         connection = Object.assign({}, connectionsDefaults_1.ConnectionsDefaults, connection);
         this._connectionParams = connection;
@@ -26,14 +26,14 @@ let Connection = class Connection {
     isConnected() {
         return this._isConnected;
     }
-    _parseUri(uri) {
+    parseUri(uri) {
         let amqp = url.parse(uri);
         return {
             username: amqp.auth.split(":")[0],
             password: amqp.auth.split(":")[1],
             hostname: amqp.hostname,
             port: parseInt(amqp.port) || 5672,
-            vhost: amqp.path.substr(1),
+            vhost: amqp.path.substring(1),
         };
     }
     _onConnectionClose() {

@@ -3,6 +3,7 @@ import {Connection} from "../connection/connection";
 import {HttpService, IHttpResponse, Method} from "@appolo/http";
 import {Promises} from "@appolo/utils";
 import {QueueMessageModel, QueueModel} from "./models/queueModel";
+import {IConnectionParams} from "../connection/IConnectionOptions";
 
 @define()
 @singleton()
@@ -11,11 +12,15 @@ export class RabbitApi {
     @inject() private httpService: HttpService;
 
 
-    public async getQueue(params: { name: string }): Promise<QueueModel> {
+    public async getQueue(params: { name: string, connection?: string }): Promise<QueueModel> {
+
+        let connectionParams = params.connection ? this.connection.parseUri(params.connection) : this.connection.connectionParams
+
         let [err, res] = await Promises.to(this._sendRequest<QueueModel>({
-            path: `queues/${this.connection.connectionParams.vhost}/${params.name}`,
+            path: `queues/${connectionParams.vhost}/${params.name}`,
             data: {},
-            method: 'get'
+            method: 'get',
+            connection: connectionParams
         }))
 
         if (!err) {
@@ -91,9 +96,10 @@ export class RabbitApi {
         path: string,
         data: { [index: string]: any },
         method: Method
+        connection?: IConnectionParams
     }): Promise<IHttpResponse<T>> {
 
-        let url = `${this.rabbitUrlApi}/${params.path}`;
+        let url = `${this.rabbitUrlApi()}/${params.path}`;
 
         let dto = {
             json: true,
@@ -107,8 +113,8 @@ export class RabbitApi {
 
     }
 
-    private get rabbitUrlApi(): string {
-        let params = this.connection.connectionParams;
+    private rabbitUrlApi(connection?: IConnectionParams): string {
+        let params = connection || this.connection.connectionParams;
 
         return `https://${params.username}:${params.password}@${params.hostname}/api`
     }
