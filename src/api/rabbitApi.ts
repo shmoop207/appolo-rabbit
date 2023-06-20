@@ -99,7 +99,7 @@ export class RabbitApi {
         connection?: IConnectionParams
     }): Promise<IHttpResponse<T>> {
 
-        let url = `${this.rabbitUrlApi()}/${params.path}`;
+        let url = `${this._rabbitUrlApi(params.connection)}/${params.path}`;
 
         let dto = {
             json: true,
@@ -113,7 +113,7 @@ export class RabbitApi {
 
     }
 
-    private rabbitUrlApi(connection?: IConnectionParams): string {
+    private _rabbitUrlApi(connection?: IConnectionParams): string {
         let params = connection || this.connection.connectionParams;
 
         return `https://${params.username}:${params.password}@${params.hostname}/api`

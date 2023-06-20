@@ -65,7 +65,7 @@ let RabbitApi = class RabbitApi {
         throw err;
     }
     async _sendRequest(params) {
-        let url = `${this.rabbitUrlApi()}/${params.path}`;
+        let url = `${this._rabbitUrlApi(params.connection)}/${params.path}`;
         let dto = {
             json: true,
             url,
@@ -74,7 +74,7 @@ let RabbitApi = class RabbitApi {
         let res = await this.httpService.request(dto);
         return res;
     }
-    rabbitUrlApi(connection) {
+    _rabbitUrlApi(connection) {
         let params = connection || this.connection.connectionParams;
         return `https://${params.username}:${params.password}@${params.hostname}/api`;
     }
